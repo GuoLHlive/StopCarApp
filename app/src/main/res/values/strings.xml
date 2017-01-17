@@ -1,0 +1,52 @@
+<resources>
+
+
+
+
+
+    <!-- 设置属性名称 -->
+    <string-array name="ArrayStringKeyName">
+        <item>buildTypeName</item>
+        <item>serverIP</item>
+        <item>serverPort</item>
+        <item>productFlavorName</item>
+        <item>productFlavorCode</item>
+        <item>serverAppHost</item>
+        <item>serverAppPath</item>
+        <item>serverVersionHost</item>
+        <item>serverVersionPath</item>
+    </string-array>
+
+    <string name="name">停车项目</string>
+    <string name="pay">收费栏</string>
+    <string name="admin">用户</string>
+    <string name="escape">逃费栏</string>
+    <string name="complete">查询栏</string>
+    <string name="setting">设置</string>
+    <string name="login">登录界面</string>
+    <string name="main">主界面</string>
+    <!-- 按钮名字 -->
+    
+    <string name="escape_sure">1确定逃费</string>
+    <string name="escape_back">3返    回</string>
+
+    <string name="pay_cash">1现金收费</string>
+    <string name="pay_print">2补打凭条</string>
+    <string name="pay_back">3返    回</string>
+    
+    <string name="completion_print">1补打凭条</string>
+    <string name="completion_back">3返     回</string>
+
+    <string name="pay_dialog_title">请输入已收金额：</string>
+    <string name="save">确定</string>
+    <string name="esc">取消</string>
+    
+    <string name="admin_title">个人中心</string>
+    <string name="admin_logout">注销</string>
+    <string name="admin_title1">本班次收入统计（元）</string>
+    <string name="admin_title2">余下车位</string>
+
+    <string name="login_title">请输入信息：</string>
+    <string name="login_username">请输入员工编号</string>
+    <string name="login_password">请输入密码</string>
+</resources>

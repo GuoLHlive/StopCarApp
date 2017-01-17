@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <data>
+
+
+    </data>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        >
+
+        <TextView
+            android:text="小型汽车： 粤X32K68"
+            style="@style/PayStringTextStyle" />
+
+        <TextView
+            android:text="车位位置： 测试路段3【5211】"
+            style="@style/PayStringTextStyle" />
+
+        <TextView
+            style="@style/PayStringTextStyle"
+            android:text="停车时长： 0天03时16分" />
+
+        <TextView
+            style="@style/PayStringTextStyle"
+            android:text="停驻时间： 2016-12-08 11:29" />
+
+        <TextView
+            android:text="当前时间： 2016-12-08 14:46"
+            style="@style/PayStringTextStyle" />
+
+        <TextView
+            android:text="停车费用： 0.01元"
+            style="@style/PayStringTextStyle" />
+
+        <TextView
+            android:text="欠        费： 0.00元"
+            style="@style/PayStringTextStyle" />
+
+        <TextView
+            android:text="总        额： 0.00元"
+            style="@style/PayStringTextStyle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            >
+            <Button
+                android:id="@+id/pay_cash"
+                style="@style/ButtonStyle"
+                android:text="@string/pay_cash"
+
+                />
+            <Button
+                android:id="@+id/pay_print"
+                style="@style/ButtonStyle"
+                android:text="@string/pay_print"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            >
+            <Button
+                android:id="@+id/pay_back"
+                style="@style/ButtonStyle"
+                android:text="@string/pay_back"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</layout>

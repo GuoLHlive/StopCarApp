@@ -1,0 +1,208 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+ext{
+    applicationName = '停车管理'//apk名
+}
+
+repositories {
+    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+}
+
+android {
+
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+
+    signingConfigs {
+        android_dev_key {
+            keyAlias 'android_dev_key'
+            keyPassword '123456'
+            storeFile file('android_dev_key.jks')
+            storePassword '123456'
+        }
+    }
+
+
+    defaultConfig {
+        applicationId "com.example.zoway.stopcarapp"
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+
+
+    //参数
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "buildTypeName", "正式"
+            resValue "string", "serverIP", "59.39.7.122"
+            resValue "integer", "serverPort", "80"
+//            resValue "string", "serverIP", "221.4.165.162"
+//            resValue "integer", "serverPort", "8092"
+            resValue "bool", "enableEditSetting", "false"
+            resValue "bool", "showDebugToolbar", "false"
+            signingConfig signingConfigs.android_dev_key
+            debuggable true
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "buildTypeName", "开发"
+            resValue "string", "serverIP", "192.168.1.48"
+            resValue "integer", "serverPort", "8091"
+//            resValue "string", "serverIP", "221.4.165.162"
+//            resValue "integer", "serverPort", "8092"
+            resValue "bool", "enableEditSetting", "true"
+            resValue "bool", "showDebugToolbar", "true"
+        }
+
+        localtest {
+            //本地测试环境
+            applicationIdSuffix ".localtest"
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "buildTypeName", "测试"
+            resValue "string", "serverIP", "192.168.1.11"
+            resValue "integer", "serverPort", "8081"
+            resValue "bool", "enableEditSetting", "true"
+            resValue "bool", "showDebugToolbar", "false"
+            signingConfig signingConfigs.android_dev_key
+        }
+
+        show {
+            //展示
+            applicationIdSuffix ".show"
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "buildTypeName", "展示"
+            resValue "string", "serverIP", "59.39.7.122"
+            resValue "integer", "serverPort", "80"
+            resValue "bool", "enableEditSetting", "true"
+            resValue "bool", "showDebugToolbar", "false"
+            signingConfig signingConfigs.android_dev_key
+        }
+
+
+        productFlavors {
+//自定义名字不过不能和上面buildType中相同，不然Gradle编译会不通过。在这里使用了『flavors_』前缀以便区分。
+//        hastags {//有地磁版
+//
+//            // manifestPlaceholders中写到的『str』，『package_name』不支持用大写，否则Gradle编译会不通过。
+//            // 这里所设置的变量可以直接使用在『AndroidManifest.xml』中，使用方式为：${package_name}
+//            // android:label="${package_name}"
+//            // manifestPlaceholders = [str:"releaseStr",package_name:"com.sunhz.mvptest.release"]
+//            // 这里的参数是为了在 java 代码中使用，具体的使用方式为：context.getResources().getString(R.string.strKey);
+//            resValue "string", "productFlavorName", "有地磁版"
+//            resValue "string", "productFlavorCode", "hastag"
+//            resValue "string", "serverAppHost", "app.manager.zparking.zoway.com.cn"
+//            resValue "string", "serverAppPath", "/hastags"
+//            resValue "string", "serverVersionHost", "app.manager.zparking.zoway.com.cn"
+//            resValue "string", "serverVersionPath", "/version"
+//            resValue "string", "app_name", "${applicationName}"
+//        }
+
+            hastags {//有地磁版
+                resValue "string", "productFlavorName", "有地磁版"
+                resValue "string", "productFlavorCode", "hastag"
+                resValue "string", "serverAppHost", "192.168.1.48:8091"
+                resValue "string", "serverAppPath", "ZparkingWorkerManagerWeb"
+                resValue "string", "serverVersionHost", "192.168.1.48:8091"
+                resValue "string", "serverVersionPath", "version"
+                resValue "string", "app_name", "${applicationName}"
+            }
+
+
+//            hastags_show {//有地磁版[展示]
+//                resValue "string", "productFlavorName", "有地磁版"
+//                resValue "string", "productFlavorCode", "hastag"
+//                resValue "string", "serverAppHost", "192.168.1.48:8091"
+//                resValue "string", "serverAppPath", "ZparkingWorkerManagerWeb"
+//                resValue "string", "serverVersionHost", "192.168.1.48:8091"
+//                resValue "string", "serverVersionPath", "version"
+//                resValue "string", "app_name", "${applicationName}"
+//            }
+
+            hastags_show {//有地磁版[展示]
+                resValue "string", "productFlavorName", "有地磁版"
+                resValue "string", "productFlavorCode", "hastag"
+                resValue "string", "serverAppHost", "appshow.manager.zparking.zoway.com.cn"
+                resValue "string", "serverAppPath", "hastags"
+                resValue "string", "serverVersionHost", "appshow.manager.zparking.zoway.com.cn"
+                resValue "string", "serverVersionPath", "version"
+                resValue "string", "app_name", "${applicationName}"
+            }
+
+
+//            notags {//无地磁版
+//                resValue "string", "productFlavorName", "无地磁版"
+//                resValue "string", "productFlavorCode", "notag"
+//                resValue "string", "serverAppHost", "app.manager.zparking.zoway.com.cn"
+//                resValue "string", "serverAppPath", "/notags"
+//                resValue "string", "serverVersionHost", "app.manager.zparking.zoway.com.cn"
+//                resValue "string", "serverVersionPath", "/version"
+//                resValue "string", "app_name", "${applicationName}"
+//            }
+        }
+
+
+    }
+
+
+    dataBinding{
+        enabled true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+
+
+    //dagger2
+    compile 'com.google.dagger:dagger:2.5'
+    apt 'com.google.dagger:dagger-compiler:2.5'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+
+    //Retrofit2.0
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+
+    //rxAndroid
+    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+
+
+
+
+
+
+
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile files('libs/pki.jar')
+    compile files('libs/plate_id_sdk.jar')
+    compile files('libs/qrcode.jar')
+    compile files('libs/android_auth.jar')
+    compile files('libs/eptapilibrary.jar')
+    compile files('libs/core-3.2.1.jar')
+    compile files('libs/smartdevicesdk.jar')
+
+
+}

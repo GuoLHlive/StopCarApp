@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/menu_msg"
+        android:title="@null"
+        android:icon="@drawable/info"
+        android:orderInCategory="99"
+        app:showAsAction="always"
+        >
+    </item>
+<item
+    android:id="@+id/menu_user"
+    android:title="@null"
+    android:icon="@drawable/user_icon"
+    android:orderInCategory="100"
+    app:showAsAction="always"
+    ></item>
+
+
+</menu>

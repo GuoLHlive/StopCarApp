@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    
+    <data>
+        <variable
+            name="keyName"
+            type="String"/>
+        
+        <variable
+            name="keyContent"
+            type="String"/>
+        
+    </data>
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
+
+        <TextView
+            style="@style/SettingKeyNameStyle"
+            android:text="@{keyName}"
+             />
+        <EditText
+            android:id="@+id/setting_edit"
+            style="@style/SettingKeyContentStyle"
+            android:text="@{keyContent}"
+            android:background="@drawable/layout_setting_edit_frame"
+            android:editable="false"
+            />
+        
+        
+    </LinearLayout>
+    
+    
+</layout>

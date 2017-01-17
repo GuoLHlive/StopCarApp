@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <data>
+        <variable
+            name="M"
+            type="String"/>
+        <variable
+            name="D"
+            type="String"/>
+        <variable
+            name="carNumber"
+            type="String"/>
+        <variable
+            name="carPlace"
+            type="String"/>
+        <variable
+            name="comeTime"
+            type="String"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:background="@drawable/layout_item_frame"
+        >
+        <RelativeLayout
+            android:id="@+id/main_item_view"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:background="@color/green"
+            >
+
+            <TextView
+                android:id="@+id/man_item_textM"
+                style="@style/MainItemTextStyle"
+                android:layout_marginLeft="10dp"
+                android:text="@{M}"
+                />
+            <TextView
+                style="@style/MainItemTextStyle"
+                android:text="@{D}"
+                android:layout_toRightOf="@+id/man_item_textM"
+                android:layout_marginLeft="5dp"
+                />
+            <TextView
+                android:id="@+id/main_item_state"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="5dp"
+                android:text="入"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@drawable/layout_reddot"/>
+
+            <TextView
+                android:id="@+id/main_item_carPlace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_marginTop="40dp"
+                android:textColor="@color/black"
+                android:text="@{carPlace}"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/main_item_carNumber"
+                style="@style/MainItemTextStyle"
+                android:text="@{carNumber}"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="3dp"
+                android:layout_below="@+id/main_item_carPlace"
+                />
+            <TextView
+                android:id="@+id/main_item_comeTime"
+                style="@style/MainItemTextStyle"
+                android:text="@{comeTime}"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="3dp"
+                android:layout_below="@+id/main_item_carNumber"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</layout>
