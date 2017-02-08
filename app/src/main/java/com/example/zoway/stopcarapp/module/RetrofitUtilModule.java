@@ -3,9 +3,12 @@ package com.example.zoway.stopcarapp.module;
 import android.content.Context;
 
 import com.example.zoway.stopcarapp.api.LoginApi;
+import com.example.zoway.stopcarapp.api.ParkingOrderApi;
 import com.example.zoway.stopcarapp.api.PartApi;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractorImpl;
+import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
+import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractorImpl;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractorImpl;
 import com.example.zoway.stopcarapp.http.RetrofitHttp;
@@ -52,5 +55,17 @@ public class RetrofitUtilModule {
     public PartInteractor providePartInteractor(PartApi partApi){
         return new PartInteractorImpl(partApi);
     }
+
+    @Provides
+    public ParkingOrderApi provideParkingOrderApi(Retrofit retrofit){
+        return retrofit.create(ParkingOrderApi.class);
+    }
+
+    @Provides
+    public ParkingOrderInteractor provideParkingOrderInteractor(ParkingOrderApi parkingOrderApi){
+        return new ParkingOrderInteractorImpl(parkingOrderApi);
+
+    }
+
 
 }

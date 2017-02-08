@@ -16,42 +16,44 @@
         >
 
         <TextView
-            android:text="小型汽车： 粤X32K68"
+            android:id="@+id/pay_license_plate"
             style="@style/PayStringTextStyle" />
 
         <TextView
-            android:text="车位位置： 测试路段3【5211】"
+            android:id="@+id/pay_stop_number"
             style="@style/PayStringTextStyle" />
 
         <TextView
+            android:id="@+id/pay_long_time"
             style="@style/PayStringTextStyle"
-            android:text="停车时长： 0天03时16分" />
+            />
 
         <TextView
+            android:id="@+id/pay_come_time"
             style="@style/PayStringTextStyle"
-            android:text="停驻时间： 2016-12-08 11:29" />
+            />
 
         <TextView
-            android:text="当前时间： 2016-12-08 14:46"
+            android:id="@+id/pay_out_time"
             style="@style/PayStringTextStyle" />
 
         <TextView
-            android:text="停车费用： 0.01元"
+            android:id="@+id/pay_stop_money"
             style="@style/PayStringTextStyle" />
 
         <TextView
-            android:text="欠        费： 0.00元"
+            android:id="@+id/pay_owe_money"
             style="@style/PayStringTextStyle" />
 
         <TextView
-            android:text="总        额： 0.00元"
+            android:id="@+id/pay_money"
             style="@style/PayStringTextStyle" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             >
             <Button
                 android:id="@+id/pay_cash"

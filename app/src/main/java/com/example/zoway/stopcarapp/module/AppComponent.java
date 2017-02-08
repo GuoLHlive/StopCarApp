@@ -4,6 +4,7 @@ import com.example.zoway.stopcarapp.MyApp;
 import com.example.zoway.stopcarapp.activity.BaseActivity;
 import com.example.zoway.stopcarapp.api.LoginApi;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
+import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
 
 import java.util.ArrayList;
@@ -25,5 +26,6 @@ public interface AppComponent {
     LoginNfcInteractor getLoginNfcInteractor();
     ArrayList<BaseActivity> getAppActivitys();
     PartInteractor getPartInteractor();
+    ParkingOrderInteractor getParkingOrderInteractor();
 
 }

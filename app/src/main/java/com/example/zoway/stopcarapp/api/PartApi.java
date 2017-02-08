@@ -16,5 +16,7 @@ public interface PartApi {
     @POST("Park/{stringPath}")
     Observable<String> PartInfo(@Path("stringPath")String path, @Body String body);
 
+    @POST("Park/{seak}/{stringPath}")
+    Observable<String> PartInfo(@Path("seak")String seak,@Path("stringPath")String path, @Body String body);
 
 }

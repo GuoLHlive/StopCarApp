@@ -15,6 +15,7 @@ import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
 import com.example.zoway.stopcarapp.bean.LoginReturnBean;
 import com.example.zoway.stopcarapp.bean.LoginUserBean;
 import com.example.zoway.stopcarapp.bean.post.LoginPostBean;
+import com.example.zoway.stopcarapp.bean.post.LogoutPostBean;
 import com.example.zoway.stopcarapp.databinding.ActivityLoginBinding;
 import com.example.zoway.stopcarapp.file.SystemService;
 import com.example.zoway.stopcarapp.util.showToast;
@@ -98,10 +99,11 @@ public class LoginActivity extends BaseActivity {
             loginNfcInteractor.loginFnc("LoginByCard.do", loginPostBean.toString(), new BaseSubscriber<String>() {
                 @Override
                 protected void onSuccess(String result) {
-                    Log.i("RetrofitLog",result);
+                    Log.i("Bean",result);
                     Gson gson = new Gson();
                     LoginReturnBean loginReturnBean = gson.fromJson(result, LoginReturnBean.class);
                     String code = loginReturnBean.getCode();
+//                    Log.i("Bean","code"+code);
                     if ("0".equals(code)){
                         activitys.remove(activity);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -120,14 +122,25 @@ public class LoginActivity extends BaseActivity {
     protected void onRestart() {
         super.onRestart();
             int size = activitys.size();
-            if (size!=0){
+            if (size>1){
                 for (Activity activity:activitys){
                     activity.finish();
                 }
                 activitys.clear();
+                logout();
             }
         startActivity(getIntent());
 
+    }
+
+    private void logout() {
+        //登出
+        LogoutPostBean postBean = new LogoutPostBean(0.0,0.0);
+        loginNfcInteractor.loginFnc("Logout.do",postBean.toString(), new BaseSubscriber<String>() {
+            @Override
+            protected void onSuccess(String result) {
+                Log.i("RetrofitLog","result:"+result);
+            }});
     }
 
 }

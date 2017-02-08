@@ -81,13 +81,24 @@ public class JsonContent {
         this.qrcode = qrcode;
     }
 
+//    @Override
+//    public String toString() {
+//        return  "车牌号：" + license_plate + '\n' +
+//                "车位编号：" + stop_number + '\n' +
+//                "停车时长：" + long_time + '\n' +
+//                "停驻时间：" + come_time + '\n' +
+//                "当前时间：" + out_time + '\n' +
+//                "总 额 ：" + money + '\n';
+//    }
+
     @Override
     public String toString() {
-        return  "车牌号：" + license_plate + '\n' +
-                "车位编号：" + stop_number + '\n' +
-                "停车时长：" + long_time + '\n' +
-                "停驻时间：" + come_time + '\n' +
-                "当前时间：" + out_time + '\n' +
-                "总 额 ：" + money + '\n';
+        return   license_plate + '\n' +
+                 stop_number + '\n' +
+                long_time + '\n' +
+                come_time + '\n' +
+                 out_time + '\n' +
+                 money + '\n';
     }
+
 }

@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.zoway.stopcarapp.R;
+import com.example.zoway.stopcarapp.bean.PayUIBean;
 import com.example.zoway.stopcarapp.databinding.ActivityTakeOcrPhotoBinding;
 import com.example.zoway.stopcarapp.file.SystemService;
 import com.example.zoway.stopcarapp.ocr.BitmapHandle;
@@ -29,6 +30,7 @@ import com.wintone.plateid.PlateCfgParameter;
 import com.wintone.plateid.PlateRecognitionParameter;
 import com.wintone.plateid.RecogService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -52,6 +54,7 @@ public class TakeOcrPhotoActivity extends BaseActivity {
     private FrameLayout preview;
     PitcCallback mPicture;
     private ProgressDialog pDia;
+    private BaseActivity activity;
 
     public RecogService.MyBinder recogBinder;
     public int iInitPlateIDSDK;
@@ -100,7 +103,32 @@ public class TakeOcrPhotoActivity extends BaseActivity {
                     Log.d(TAG, msg.obj.toString());
                     //回调
                     Log.i("TakeOcrPhotoActivity","TakeOcrPhotoActivity:"+msg.obj.toString());
-                    TakeOcrPhotoActivity.this.finish();
+                    Log.i("TakeOcrPhotoActivity","TakeOcrPhotoActivity:"+compressFilePath);
+                    try {
+                        JSONObject jsonObject = new JSONObject(msg.obj.toString());
+                        String result = jsonObject.getString("result");
+                        if ("?".equals(result)){
+                            File file = new File(compressFilePath);
+                            if (file.exists()){
+                                file.delete();
+                                Toast.makeText(getApplicationContext(),"无法识别照片，请将镜头内红框对准车牌",Toast.LENGTH_SHORT).show();
+
+                            }
+                        }else {
+                            Intent intent = new Intent(activity,PayActivity.class);
+                            intent.putExtra("PayUI",new PayUIBean(true,result));
+                            activity.startActivity(intent);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //关闭当前activity
+                    BaseActivity baseActivity = activitys.get(activitys.size() - 1);
+                    baseActivity.finish();
+                    activitys.remove(activitys.size()-1);
+
                     break;
                 default:
                     break;
@@ -117,7 +145,8 @@ public class TakeOcrPhotoActivity extends BaseActivity {
     @Override
     protected void initData(Intent intent) {
         binding = (ActivityTakeOcrPhotoBinding) view;
-        activitys.add(this);
+        activity = this;
+        activitys.add(activity);
         binding.setLightBtnTxt("开灯");
         mPicture = new PitcCallback();
 

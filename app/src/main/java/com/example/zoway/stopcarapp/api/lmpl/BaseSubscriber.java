@@ -35,6 +35,15 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
     public void onError(Throwable e) {
         e.printStackTrace();
         Log.i(TAG, "onError:" + e.getMessage());
+
+
+
+
+
+
+
+
+
     }
 
     //处理

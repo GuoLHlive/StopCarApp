@@ -37,6 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity{
         view = DataBindingUtil.setContentView(this, getLayoutId());
         appComponent = MyApp.getApp(getApplicationContext()).component();
         activitys = appComponent.getAppActivitys();
+        Log.i("RetrofitLog","activitys:"+activitys.size());
 
         initData(getIntent());
         initView();
@@ -47,10 +48,6 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected abstract int getLayoutId();
     protected abstract void initData(Intent intent);
     protected abstract void initView();
-
-
-
-
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -69,7 +66,6 @@ public abstract class BaseActivity extends AppCompatActivity{
                 finish();
             }
         }
-
         return true;
     }
 

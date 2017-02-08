@@ -36,7 +36,7 @@
         android:supportsRtl="true"
         android:name=".MyApp"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LoginActivity" android:label="@string/name"
+        <activity android:name=".activity.LoginActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,12 +54,12 @@
 
         <activity android:name=".MainActivity"
             />
-        <activity android:name=".activity.PayActivity" android:label="@string/pay" />
-        <activity android:name=".activity.CompleteActivity" android:label="@string/complete" />
-        <activity android:name=".activity.EscapeActivity" android:label="@string/escape" />
-        <activity android:name=".activity.AdminActivity" android:label="@string/admin" />
-        <activity android:name=".activity.SettingActivity" android:label="@string/setting"/>
-        <activity android:name=".activity.TakeOcrPhotoActivity" android:label="@string/escape"></activity>
+        <activity android:name=".activity.PayActivity"  />
+        <activity android:name=".activity.CompleteActivity"  />
+        <activity android:name=".activity.EscapeActivity"  />
+        <activity android:name=".activity.AdminActivity"  />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.TakeOcrPhotoActivity"></activity>
         <activity android:name=".activity.Admin2Activity"
             />
         <activity android:name=".activity.EscapeRecordActivity"></activity>

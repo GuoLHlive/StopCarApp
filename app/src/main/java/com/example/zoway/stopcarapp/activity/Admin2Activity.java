@@ -29,7 +29,6 @@ public class Admin2Activity extends BaseActivity {
 
     @Override
     protected void initData(Intent intent) {
-        getSupportActionBar().hide();
         binding = (ActivityAdmin2Binding) view;
         activitys.add(this);
         loginNfcInteractor = appComponent.getLoginNfcInteractor();
@@ -40,7 +39,9 @@ public class Admin2Activity extends BaseActivity {
         binding.adminBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                BaseActivity baseActivity = activitys.get(activitys.size() - 1);
+                baseActivity.finish();
+                activitys.remove(activitys.size()-1);
             }
         });
 

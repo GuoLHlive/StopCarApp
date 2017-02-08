@@ -10,5 +10,8 @@ public interface PartInteractor {
     //订阅动作
     Subscription partInfo(String url, String body, BaseSubscriber<String> subscriber);
 
+    //订阅动作
+    Subscription partInfo(String url,String path,String body, BaseSubscriber<String> subscriber);
+
 
 }

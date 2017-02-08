@@ -33,4 +33,13 @@ public class PartInteractorImpl implements PartInteractor {
                 .subscribe(subscriber);
         return subscriber;
     }
+
+    @Override
+    public Subscription partInfo(String url, String path, String body, BaseSubscriber<String> subscriber) {
+        Observable<String> partInfo = partApi.PartInfo(url, path, body);
+        partInfo.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
 }

@@ -1,54 +1,59 @@
 package com.example.zoway.stopcarapp;
 
+
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.renderscript.Sampler;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.WindowManager;
+
+import android.view.View;
+
 
 import com.example.zoway.stopcarapp.activity.Admin2Activity;
-import com.example.zoway.stopcarapp.activity.AdminActivity;
+
 import com.example.zoway.stopcarapp.activity.BaseActivity;
 import com.example.zoway.stopcarapp.activity.EscapeRecordActivity;
 import com.example.zoway.stopcarapp.adapter.MainRecyclerAdapter;
+
 import com.example.zoway.stopcarapp.api.lmpl.BaseSubscriber;
-import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
+import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
+import com.example.zoway.stopcarapp.bean.ParkingOrderListBean;
 import com.example.zoway.stopcarapp.bean.PartBaseInfoBean;
 import com.example.zoway.stopcarapp.bean.PartSeatBean;
-import com.example.zoway.stopcarapp.bean.post.LogoutPostBean;
 import com.example.zoway.stopcarapp.databinding.ActivityMainBinding;
+
+import com.example.zoway.stopcarapp.http.RetrofitHttp;
+import com.example.zoway.stopcarapp.service.ParkingWebSocket;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+
+
+
+public class MainActivity extends BaseActivity implements View.OnClickListener{
     //屏蔽home键
     public static final int FLAG_HOMEKEY_DISPATCHED = 0x80000000;
     private ActivityMainBinding binding;
-
+    private BaseActivity activity;
 
     private MainRecyclerAdapter adapter;
-    private Menu menu;
+
 
     private PartInteractor partInteractor;
-    private LoginNfcInteractor loginNfcInteractor;
+    private ParkingOrderInteractor parkingOrderInteractor;
+
 
     private ArrayList<String[]> list;
     private PartBaseInfoBean baseInfoBean;
-    private PartSeatBean seatBean;
-
     private ArrayList<PartSeatBean.DatasBean> lists;
+    private List<ParkingOrderListBean.DatasBean> datas;
+
+
 
     @Override
     protected int getLayoutId() {
@@ -57,28 +62,22 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData(Intent intent) {
         binding = (ActivityMainBinding) view;
-        activitys.add(this);
-        loginNfcInteractor = appComponent.getLoginNfcInteractor();
+        activity = this;
+        activitys.add(activity);
+
+        //停车项目信息
         partInteractor = appComponent.getPartInteractor();
+        //停车场信息
+        parkingOrderInteractor = appComponent.getParkingOrderInteractor();
+        //模拟数据
         list = new ArrayList<>();
-        Gson gson = new Gson();
-        //拿去地区信息 BaseInfo.do
-        downBaseInfo(gson);
-        //拿去车位信息 Seat/BaseInfo.do
-        downSeatBaseInfo(gson);
-
-
-
-
         String[] str1 = {"418","90","5211","粤X32K68","时间X天X时X分"};
         String[] str2 = {"410","90","5212","粤X32K68","时间X天X时X分"};
         String[] str3 = {"410","90","5213","粤X32K68","时间X天X时X分"};
         list.add(str1);
         list.add(str2);
         list.add(str3);
-
-
-
+//        后台信息
 
     }
 
@@ -86,11 +85,17 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        binding.mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
-        adapter = new MainRecyclerAdapter(list,this);
-        binding.mRecyclerView.setAdapter(adapter);
-
+        Gson gson = new Gson();
+        //拿取地区信息 BaseInfo.do
+        downBaseInfo(gson);
+        initOnClick();
+//      跟后台数据通信
+        RetrofitHttp.openWebSocket();
     }
+
+
+
+
 
     //数据
     private void downBaseInfo(final Gson gson) {
@@ -99,61 +104,65 @@ public class MainActivity extends BaseActivity {
             protected void onSuccess(String result) {
                 baseInfoBean = gson.fromJson(result,PartBaseInfoBean.class);
                 String title = baseInfoBean.getData().getName();
-                getSupportActionBar().setTitle(title);
-                Log.i("Bean","BaseInfo:"+result);
+                binding.mainTitle.setText(title);
+//                Log.i("Bean","BaseInfo:"+result);
+
+                //拿取车位信息 Seat/BaseInfo.do
+                downSeatBaseInfo(gson);
             }
         });
     }
 
     private void downSeatBaseInfo(final Gson gson) {
-        partInteractor.partInfo("Seat/BaseInfo.do", "", new BaseSubscriber<String>() {
+        partInteractor.partInfo("Seat","BaseInfo.do", "", new BaseSubscriber<String>() {
             @Override
             protected void onSuccess(String result) {
-               seatBean = gson.fromJson(result,PartSeatBean.class);
-                lists = seatBean.getDatas();
-                Log.i("Bean","Seat:"+result);
+                PartSeatBean partSeatBean = gson.fromJson(result, PartSeatBean.class);
+                lists = partSeatBean.getDatas();
+                //                Log.i("Bean","Seat:"+result);
                 Log.i("Bean","Seat_List:"+lists.size());
+//                s1.onNext(seatBean);
+                downList(gson);
             }
         });
     }
 
 
+    private void downList(final Gson gson) {
 
+        parkingOrderInteractor.parkingOrderInfo("List.do", "", new BaseSubscriber<String>() {
+            @Override
+            protected void onSuccess(String result) {
+                Log.i("Bean","数据正在写入!");
+                ParkingOrderListBean parkingOrderListBean = gson.fromJson(result, ParkingOrderListBean.class);
+                datas = parkingOrderListBean.getDatas();
+                Log.i("Bean","datas:"+datas.size());
+                binding.mRecyclerView.setLayoutManager(new GridLayoutManager(activity,2));
+                adapter = new MainRecyclerAdapter(lists,list,datas,activity);
+                binding.mRecyclerView.setAdapter(adapter);
+                Log.i("Bean","数据写入成功!");
 
+            }
+        });
 
-    //菜单栏
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_user,menu);
-        this.menu = menu;
-        return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        Intent intent = null;
-        switch (item.getItemId()){
-            case R.id.menu_user:
-                intent = new Intent(this, Admin2Activity.class);
-                startActivity(intent);
-                break;
-            case R.id.menu_msg:
-                intent = new Intent(this, EscapeRecordActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
+
+
+    private void initOnClick() {
+        binding.mainEscapeRecord.setOnClickListener(this);
+        binding.mainMenu.setOnClickListener(this);
     }
+
+
 
 
     //数字键盘监听
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_HOME){
-            onOptionsItemSelected(menu.findItem(R.id.menu_user));
+            Intent intent = new Intent(this,Admin2Activity.class);
+            startActivity(intent);
         }
         if (keyCode == KeyEvent.KEYCODE_BACK){
 
@@ -162,17 +171,27 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        Intent intent = null;
+        switch (view.getId()){
+            case R.id.main_menu:
+                intent = new Intent(this,Admin2Activity.class);
+                break;
+            case R.id.main_escapeRecord:
+                intent = new Intent(this,EscapeRecordActivity.class);
+                break;
+        }
+        if (intent!=null){
+            startActivity(intent);
+        }
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //登出
-        LogoutPostBean postBean = new LogoutPostBean(0.0,0.0);
-        loginNfcInteractor.loginFnc("Logout.do",postBean.toString(), new BaseSubscriber<String>() {
-                @Override
-                protected void onSuccess(String result) {
-                    Log.i("RetrofitLog","result:"+result);
-                }});
+//      关闭通信
+        RetrofitHttp.stopWebSocket();
 
     }
 }

@@ -182,7 +182,9 @@ dependencies {
     //Retrofit2.0
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'com.squareup.okhttp3:okhttp-ws:3.3.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 
     //rxAndroid
     compile 'io.reactivex:rxandroid:1.2.0'
