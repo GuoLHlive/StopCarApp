@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
+
     <data>
+
+        <!--<import type="com.example.zoway.stopcarapp.bean.PartSeatBean"/>-->
+
+
+        <!--<variable-->
+            <!--name="partSeatBean"-->
+            <!--type="PartSeatBean"/>-->
+
+        <import type="com.example.zoway.stopcarapp.bean.UIsBean"/>
+
         <variable
-            name="M"
-            type="String"/>
+            name="uisBean"
+            type="UIsBean"/>
+
         <variable
-            name="D"
-            type="String"/>
-        <variable
-            name="carNumber"
-            type="String"/>
-        <variable
-            name="carPlace"
-            type="String"/>
-        <variable
-            name="comeTime"
-            type="String"/>
+            name="postion"
+            type="int"/>
+
     </data>
 
     <LinearLayout
@@ -31,17 +36,17 @@
             android:id="@+id/main_item_view"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            app:StopBackground="@{uisBean.lists.get(postion).isParking}"
+            android:onClick="@{uisBean.lists.get(postion).payOnClick}"
             >
 
             <TextView
                 android:id="@+id/man_item_textM"
                 style="@style/MainItemTextStyle"
                 android:layout_marginLeft="10dp"
-                android:text="@{M}"
                 />
             <TextView
                 style="@style/MainItemTextStyle"
-                android:text="@{D}"
                 android:layout_toRightOf="@+id/man_item_textM"
                 android:layout_marginLeft="5dp"
                 />
@@ -51,43 +56,44 @@
                 android:layout_height="25dp"
                 android:layout_alignParentRight="true"
                 android:layout_margin="5dp"
-                android:text="入"
                 android:textSize="16sp"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:background="@drawable/layout_reddot"/>
+                android:background="@drawable/layout_reddot"
+                android:text="@{uisBean.lists.get(postion).dotText}"
+                android:visibility="@{uisBean.lists.get(postion).isVisual}"
+                />
 
             <TextView
                 android:id="@+id/main_item_carPlace"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="45dp"
                 android:textColor="@color/black"
-                android:text="@{carPlace}"
+                android:text="@{uisBean.lists.get(postion).seatNo}"
                 android:gravity="center"
                 />
 
             <TextView
                 android:id="@+id/main_item_carNumber"
                 style="@style/MainItemTextStyle"
-                android:text="@{carNumber}"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="3dp"
                 android:layout_below="@+id/main_item_carPlace"
+                android:text="@{uisBean.lists.get(postion).vehicleNo}"
                 />
             <TextView
                 android:id="@+id/main_item_comeTime"
                 style="@style/MainItemTextStyle"
-                android:text="@{comeTime}"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="3dp"
                 android:layout_below="@+id/main_item_carNumber"
+                android:text="@{uisBean.lists.get(postion).stringParkingTime}"
                 />
 
         </RelativeLayout>
 
     </LinearLayout>
-
 
 </layout>

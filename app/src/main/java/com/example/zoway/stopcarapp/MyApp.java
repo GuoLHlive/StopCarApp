@@ -11,6 +11,8 @@ import com.example.zoway.stopcarapp.api.config.Config;
 import com.example.zoway.stopcarapp.module.AppComponent;
 
 import com.example.zoway.stopcarapp.module.AppModule;
+
+import com.example.zoway.stopcarapp.module.BeanModule;
 import com.example.zoway.stopcarapp.module.DaggerAppComponent;
 
 import com.example.zoway.stopcarapp.module.RetrofitUtilModule;
@@ -53,7 +55,7 @@ public class MyApp extends Application {
     private void setDraggerConfig() {
         appComponent =  DaggerAppComponent.builder().
                 retrofitUtilModule(new RetrofitUtilModule(this))
-                .appModule(new AppModule()).build();
+                .appModule(new AppModule()).beanModule(new BeanModule()).build();
         appComponent.inject(this);
 
     }

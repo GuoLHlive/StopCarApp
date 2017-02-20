@@ -88,6 +88,9 @@ public class TakeOcrPhotoActivity extends BaseActivity {
     String[] fieldvalue = new String[14];
     private String compressFilePath = null;//压缩后图片路径
 
+    private int parkingOrderId;
+
+
     private Handler handler = new Handler() {
 
         @Override
@@ -116,7 +119,7 @@ public class TakeOcrPhotoActivity extends BaseActivity {
                             }
                         }else {
                             Intent intent = new Intent(activity,PayActivity.class);
-                            intent.putExtra("PayUI",new PayUIBean(true,result));
+                            intent.putExtra("PayUI",new PayUIBean(true,result,parkingOrderId));
                             activity.startActivity(intent);
 
                         }
@@ -149,6 +152,9 @@ public class TakeOcrPhotoActivity extends BaseActivity {
         activitys.add(activity);
         binding.setLightBtnTxt("开灯");
         mPicture = new PitcCallback();
+        //订单号
+        parkingOrderId = intent.getIntExtra("parkingOrderId", 1000);
+
 
     }
 
@@ -399,12 +405,15 @@ public class TakeOcrPhotoActivity extends BaseActivity {
                                 srcBitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                                 options -= 15;//每次都减少10
                             }
+
                             compressFilePath = SystemService.photoFile + fname.substring(fname.lastIndexOf("/"));
                             try {
                                 File compressFile = new File(compressFilePath);
                                 if(!compressFile.exists()) compressFile.createNewFile();
                                 FileOutputStream fos = new FileOutputStream(compressFile);
                                 fos.write(baos.toByteArray());
+                                srcBitmap.recycle();
+                                srcBitmap = null;
                                 baos.close();
                                 fos.close();
                             }catch(Exception ex){

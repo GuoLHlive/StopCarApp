@@ -6,6 +6,8 @@ import com.example.zoway.stopcarapp.api.LoginApi;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
+import com.example.zoway.stopcarapp.bean.PartSeatBean;
+import com.example.zoway.stopcarapp.bean.UIsBean;
 
 import java.util.ArrayList;
 
@@ -20,12 +22,13 @@ import dagger.Component;
 
 
 @Singleton
-@Component( modules = {AppModule.class,RetrofitUtilModule.class})
+@Component( modules = {AppModule.class,RetrofitUtilModule.class,BeanModule.class})
 public interface AppComponent {
     void inject(MyApp myApp);
     LoginNfcInteractor getLoginNfcInteractor();
     ArrayList<BaseActivity> getAppActivitys();
     PartInteractor getPartInteractor();
     ParkingOrderInteractor getParkingOrderInteractor();
+    UIsBean getUIsBean();
 
 }

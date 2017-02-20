@@ -17,6 +17,7 @@ import com.example.zoway.stopcarapp.api.lmpl.BaseSubscriber;
 import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.bean.ParkingOrderDetailBean;
 import com.example.zoway.stopcarapp.bean.PayUIBean;
+import com.example.zoway.stopcarapp.bean.UIsBean;
 import com.example.zoway.stopcarapp.databinding.ActivityPayBinding;
 import com.example.zoway.stopcarapp.dev.IDevService;
 import com.example.zoway.stopcarapp.module.DaggerDevComponent;
@@ -28,6 +29,10 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -52,10 +57,12 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     private PayUIBean payUI;
     private int parkingOrderId;//订单号
     private String CarNumber; // 车牌
+    private UIsBean uIsBean;
 
     @Override
     protected int getLayoutId() {
         payUI = (PayUIBean) getIntent().getSerializableExtra("PayUI");
+        Log.i("Bean",payUI.toString()+"");
         return R.layout.activity_pay;
     }
 
@@ -69,7 +76,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         activitys.add(activity);
 
         parkingOrderInteractor = appComponent.getParkingOrderInteractor();
-
+        uIsBean = appComponent.getUIsBean();
     }
 
     @Override
@@ -77,6 +84,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         //拿取支付订单信息
         if (payUI.isTakePhote()){
             CarNumber = payUI.getCarNumber();
+            parkingOrderId = payUI.getParkingOrderId();
             downParkingOrderInfoCarNumber();
         }else {
             parkingOrderId = payUI.getParkingOrderId();
@@ -120,17 +128,35 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void initDataView() {
-        binding.payLicensePlate.setText("小型汽车： 粤X32K68");
+        long thisTime = new Date().getTime();
+        binding.payLicensePlate.setText("小型汽车："+data.getVehicleNo());
         binding.payStopNumber.setText("车位位置： 测试路段3【5211】");
         binding.payLongTime.setText("停车时长： "+LongTimeOrString.longTimeOrString(data.getParkingTime()));
-        binding.payComeTime.setText("停驻时间： 2016-12-08 11:29");
-        binding.payOutTime.setText("当前时间： 2016-12-08 14:46");
-        binding.payStopMoney.setText("停车费用： 0.01元");
-        binding.payOweMoney.setText("欠        费： 0.00元");
-        binding.payMoney.setText("总        额： 0.00元");
+        binding.payComeTime.setText("停驻时间： "+LongTimeOrString.stringStopTime(data.getParkingTime(),thisTime));
+        binding.payOutTime.setText("当前时间： "+LongTimeOrString.longTimeOrString(thisTime));
+        binding.payStopMoney.setText("停车费用： "+data.getDueFare()+"元");
+        binding.payOweMoney.setText("欠        费："+(data.getDueFare()-data.getRealFare())+"元");
+        binding.payMoney.setText("已付        额： "+data.getRealFare()+"元");
         if (payUI.isTakePhote()){
             binding.payLicensePlate.setText("小型汽车： "+data.getVehicleNo());
         }
+
+
+        //UI界面写入车牌
+        ArrayList<UIsBean.UIBean> lists = uIsBean.getLists();
+        if (lists!=null&&lists.size()!=0){
+            int parkSeatId = data.getParkSeatId();
+            for (int i=0;i<lists.size();i++){
+                UIsBean.UIBean uiBean = lists.get(i);
+                int stopId = uiBean.getParkSeatId();
+                if (parkSeatId == stopId){
+                    uiBean.setPhoto(true);
+                    uiBean.setVehicleNo(data.getVehicleNo());
+                }
+
+            }
+        }
+
     }
 
     private void addOnClick() {
@@ -139,7 +165,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         binding.payPrint.setOnClickListener(this);
     }
 
-    //ID 转为json（post请求body）
+    //ID 转为json（post请求body）根据订单号查询订单
     private String id_stringOrJson(){
         JSONObject jsonObject = new JSONObject();
 
@@ -151,12 +177,33 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         return jsonObject.toString();
     }
 
+    //封装支付数据
+    private String stringOrJsonPay(double realFare){
+
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("parkingOrderId",parkingOrderId);
+            jsonObject.put("realFare",realFare);
+            jsonObject.put("payType","cash");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject.toString();
+
+    }
+
+
+
+
     //请求 转为json（post请求body）
     private String stringOrJson(){
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("parkingOrderId",0);
+            jsonObject.put("parkingOrderId",parkingOrderId);
             jsonObject.put("vehicleNo",CarNumber);
             jsonObject.put("vehicleType","02");
             jsonObject.put("isSpecial","no");
@@ -175,10 +222,40 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             activitys.remove(activitys.size()-1);
         }
         if (id == binding.payCash.getId()){
+            //支付
             Pay_Dialog_View dialogView = new Pay_Dialog_View(activity, new Pay_Dialog_View.getUserInput() {
                 @Override
                 public void Input(String userInput) {
-                    Toast.makeText(activity,userInput, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity,"已支付:"+userInput, Toast.LENGTH_SHORT).show();
+
+                    if (!"".equals(userInput)){
+                        Double money = Double.valueOf(userInput);
+                        if (money!=0.0){
+                            parkingOrderInteractor.parkingOrderInfo("Pay.do", stringOrJsonPay(money), new BaseSubscriber<String>() {
+                                @Override
+                                protected void onSuccess(String result) {
+                                    Log.i("Bean","支付成功："+result);
+
+                                    //UI界面修改背景颜色
+                                    ArrayList<UIsBean.UIBean> lists = uIsBean.getLists();
+                                    if (lists!=null&&lists.size()!=0){
+                                        int parkSeatId = data.getParkSeatId();
+                                        for (int i=0;i<lists.size();i++){
+                                            UIsBean.UIBean uiBean = lists.get(i);
+                                            int stopId = uiBean.getParkSeatId();
+                                            if (parkSeatId == stopId){
+                                                uiBean.setPhoto(true);
+                                                uiBean.setVehicleNo(data.getVehicleNo());
+                                                uiBean.setIsParking("yes_pay");
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+
+                    }
                 }
             });
             dialogView.setCanceledOnTouchOutside(true);
@@ -186,6 +263,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
 
         }
         if (id == binding.payPrint.getId()){
+            //打印功能
             if(!iDevService.supportPrint()){
                 Toast.makeText(activity, "不支付打印机功能", Toast.LENGTH_SHORT).show();
                 return;
@@ -200,11 +278,12 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                 jsonObject.put("come_time",binding.payComeTime.getText());
                 jsonObject.put("out_time",binding.payOutTime.getText());
                 jsonObject.put("money",binding.payMoney.getText());
-                jsonObject.put("qrcode",data.getMobileUrl());
+                jsonObject.put("qrcode","www.baidu.com");
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+//            Log.i("Print",jsonObject.toString());
             iDevService.print(jsonObject.toString());
 
         }

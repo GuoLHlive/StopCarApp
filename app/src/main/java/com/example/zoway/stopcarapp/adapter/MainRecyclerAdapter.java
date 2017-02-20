@@ -1,26 +1,15 @@
 package com.example.zoway.stopcarapp.adapter;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.example.zoway.stopcarapp.R;
-import com.example.zoway.stopcarapp.activity.EscapeActivity;
-import com.example.zoway.stopcarapp.activity.PayActivity;
-import com.example.zoway.stopcarapp.bean.ParkingOrderListBean;
-import com.example.zoway.stopcarapp.bean.PartSeatBean;
-import com.example.zoway.stopcarapp.bean.PayUIBean;
+import com.example.zoway.stopcarapp.bean.UIsBean;
 import com.example.zoway.stopcarapp.databinding.MainItemLayoutBinding;
-import com.example.zoway.stopcarapp.activity.TakeOcrPhotoActivity;
-
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Created by Administrator on 2016/12/12.
@@ -29,19 +18,26 @@ import java.util.List;
  */
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>{
 
-    //模拟数据
-    private ArrayList<String[]> list;
-    private Activity activity;
-    //车位信息
-    private ArrayList<PartSeatBean.DatasBean> lists;
-    //未完成订单
-    private List<ParkingOrderListBean.DatasBean> datas;
 
-    public MainRecyclerAdapter(ArrayList<PartSeatBean.DatasBean> lists,ArrayList<String[]> list, List<ParkingOrderListBean.DatasBean> datas,Activity activity) {
-        this.lists = lists;
-        this.list = list;
-        this.activity = activity;
-        this.datas = datas;
+//    private Activity activity;
+//
+//    //未完成订单
+//    private ParkingOrderListBean parkingOrderListBean;
+//    //车位信息
+//    private PartSeatBean partSeatBean;
+//
+//    public MainRecyclerAdapter(PartSeatBean partSeatBean, ParkingOrderListBean parkingOrderListBean,Activity activity) {
+//        this.partSeatBean = partSeatBean;
+//        this.activity = activity;
+//        this.parkingOrderListBean = parkingOrderListBean;
+//    }
+
+    private UIsBean uIsBean;
+    private ArrayList<UIsBean.UIBean> lists;
+
+    public MainRecyclerAdapter(UIsBean uIsBean) {
+        this.uIsBean = uIsBean;
+        this.lists= uIsBean.getLists();
     }
 
     @Override
@@ -53,55 +49,62 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String[] arrayString = list.get(position);
+//        //把所有点击事件变空(初始化)
+//        holder.binding.mainItemView.setOnClickListener(null);
+//        holder.binding.mainItemState.setVisibility(View.GONE);
 
-        PartSeatBean.DatasBean datasBean = lists.get(position);
-
-        ParkingOrderListBean.DatasBean parkingBean = null;
-        if (position<1){
-            parkingBean = datas.get(position);
-            String payStatus = parkingBean.getPayStatus();
-            if ("no_pay".equals(payStatus)){
-                holder.binding.mainItemState.setText("停");
-            }else {
-                holder.binding.mainItemState.setText("?");
-            }
-        }else {
-            holder.binding.mainItemState.setText("入");
-        }
-
-        holder.binding.mainItemView.setOnClickListener(new tackClick(holder,activity,parkingBean));
-
+//        //需要的数据
+//        List<ParkingOrderListBean.DatasBean> datas = parkingOrderListBean.getDatas();
+//        PartSeatBean.DatasBean partSeat = partSeatBean.getDatas().get(position);
 
         //车位状态修改
-        boolean is = isParking(datasBean);
-        holder.setBackgroud(is);
+        holder.setPostion(position);
+        holder.setData(uIsBean);
+//        holder.setParkSeatBean(partSeatBean);
+
+//
+//        //未完成订单与对应停车ID号匹对
+//        if (datas.size()!=0&&datas!=null){
+//            for (int i=0;i<datas.size();i++){
+//                ParkingOrderListBean.DatasBean datasBean = datas.get(i);
+//                int parkSeatId = datasBean.getParkSeatId();
+//                int sectionId = partSeat.getParkSeatId();
+//                if (parkSeatId == sectionId){
+//                    //匹对成功
+//                    //改变状态
+//                    if ("yes".equals(datasBean.getIsParking())){
+//                        //没有支付
+//                        holder.binding.mainItemState.setVisibility(View.VISIBLE);
+//                        holder.binding.mainItemState.setText("停");
+//                        if ("no_pay".equals(datasBean.getPayStatus())){
+//                            partSeat.setIsParking("yes");
+//                        }else {
+//                            partSeat.setIsParking("yes_pay");
+//                        }
+//
+//                    }else{
+//                        partSeat.setIsParking("no");
+//                        holder.binding.mainItemState.setVisibility(View.GONE);
+//                    }
+//                    //写入监听
+//                    int parkingOrderId = datasBean.getParkingOrderId();
+//                    holder.binding.mainItemView.setOnClickListener(new tackClick(parkingOrderId));
+//                    //修改属性
+//                    holder.binding.mainItemCarNumber.setText("粤X12345");
+//                    holder.binding.mainItemComeTime.setText(LongTimeOrString.longTimeOrString(datasBean.getParkingTime()));
+//                }
+//            }
+//        }
 
 
-        holder.setM(arrayString[0]);
-        holder.setD(arrayString[1]);
-        holder.setCarPlace(datasBean.getSeatNo());
-        holder.setCarNumber(arrayString[3]);
-        holder.setComeTime(arrayString[4]);
 
 
 
-    }
-
-    private boolean isParking(PartSeatBean.DatasBean datasBean) {
-        String isParking = datasBean.getIsParking();
-        boolean is = false;
-        if ("no".equals(isParking)){
-            is = false;
-        }else {
-            is = true;
-        }
-        return is;
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return this.lists.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -113,67 +116,35 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             binding = DataBindingUtil.bind(itemView);
         }
 
-        public void setM(String m){
-            binding.setM("M: "+m);
-        }
-        public void setD(String d){
-            binding.setD("D: "+d);
-        }
-        //车牌
-        public void setCarNumber(String carNumber){
-            binding.setCarNumber(carNumber);
-        }
-        //车位
-        public void setCarPlace(String carPlace){
-            binding.setCarPlace(carPlace);
-        }
-        //进场时间
-        public void setComeTime(String time){
-            binding.setComeTime(time);
+//        public void setParkSeatBean(PartSeatBean parkSeatBean){
+//            binding.setPartSeatBean(parkSeatBean);
+//        }
+
+        public void setPostion(int postion){
+            binding.setPostion(postion);
         }
 
-        public void setBackgroud(boolean is){
-            if (is){
-                binding.mainItemView.setBackgroundColor(activity.getResources().getColor(R.color.pig));
-            }else {
-                binding.mainItemView.setBackgroundColor(activity.getResources().getColor(R.color.green));
-            }
+        public void setData(UIsBean uIsBean){
+            binding.setUisBean(uIsBean);
         }
 
 
     }
 
-    private class tackClick implements View.OnClickListener{
-
-        private ViewHolder viewHolder;
-        private Activity activity;
-        private ParkingOrderListBean.DatasBean parkingBean;
-
-        public tackClick(ViewHolder viewHolder, Activity activity) {
-            this.viewHolder = viewHolder;
-            this.activity = activity;
-        }
-
-        public tackClick(ViewHolder viewHolder, Activity activity, ParkingOrderListBean.DatasBean parkingBean) {
-            this.viewHolder = viewHolder;
-            this.activity = activity;
-            this.parkingBean = parkingBean;
-        }
-
-        @Override
-        public void onClick(View view) {
-            Intent intent = null;
-            if (parkingBean!=null){
-                int parkingOrderId = parkingBean.getParkingOrderId();
-                intent = new Intent(activity,PayActivity.class);
-                intent.putExtra("PayUI",new PayUIBean(false,parkingOrderId));
-            }else {
-                intent = new Intent(activity,TakeOcrPhotoActivity.class);
-            }
-            if (intent!=null){
-                activity.startActivity(intent);
-            }
-    }
-    }
+//    private class tackClick implements View.OnClickListener{
+//
+//        private int parkingOrderId;
+//
+//        public tackClick(int parkingOrderId) {
+//            this.parkingOrderId = parkingOrderId;
+//        }
+//
+//        @Override
+//        public void onClick(View view) {
+//            Intent intent = new Intent(activity,PayActivity.class);
+//            intent.putExtra("PayUI",new PayUIBean(false,parkingOrderId));
+//            activity.startActivity(intent);
+//    }
+//    }
 
 }

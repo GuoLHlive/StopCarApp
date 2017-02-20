@@ -7,12 +7,13 @@ import java.util.List;
  */
 public class ParkingOrderListBean {
 
+
     /**
      * success : true
-     * date : 2017-01-18 10:25:49
+     * date : 2017-02-17 09:55:40
      * type : data
      * code : 0
-     * datas : [{"parkingOrderId":-1,"recordNo":"PAA1000120170117162800","parkSeatId":-3,"vehicleNo":null,"vehicleType":null,"isParking":"yes","parkingTime":1484641970000,"payStatus":"no_pay","mobileUrl":"http://www.baidu.com"}]
+     * datas : [{"parkingOrderId":85,"recordNo":"PAA1000120170217095432","parkId":0,"parkSectionId":0,"parkSeatId":-3,"vehicleNo":"粤FQK883","vehicleType":"02","isParking":"yes","parkingTime":1487296472000,"leaveTime":null,"payStatus":"no_pay"}]
      */
 
     private boolean success;
@@ -63,26 +64,30 @@ public class ParkingOrderListBean {
 
     public static class DatasBean {
         /**
-         * parkingOrderId : -1
-         * recordNo : PAA1000120170117162800
+         * parkingOrderId : 85
+         * recordNo : PAA1000120170217095432
+         * parkId : 0
+         * parkSectionId : 0
          * parkSeatId : -3
-         * vehicleNo : null
-         * vehicleType : null
+         * vehicleNo : 粤FQK883
+         * vehicleType : 02
          * isParking : yes
-         * parkingTime : 1484641970000
+         * parkingTime : 1487296472000
+         * leaveTime : null
          * payStatus : no_pay
-         * mobileUrl : http://www.baidu.com
          */
 
         private int parkingOrderId;
         private String recordNo;
+        private int parkId;
+        private int parkSectionId;
         private int parkSeatId;
-        private Object vehicleNo;
-        private Object vehicleType;
+        private String vehicleNo;
+        private String vehicleType;
         private String isParking;
         private long parkingTime;
+        private Object leaveTime;
         private String payStatus;
-        private String mobileUrl;
 
         public int getParkingOrderId() {
             return parkingOrderId;
@@ -100,6 +105,22 @@ public class ParkingOrderListBean {
             this.recordNo = recordNo;
         }
 
+        public int getParkId() {
+            return parkId;
+        }
+
+        public void setParkId(int parkId) {
+            this.parkId = parkId;
+        }
+
+        public int getParkSectionId() {
+            return parkSectionId;
+        }
+
+        public void setParkSectionId(int parkSectionId) {
+            this.parkSectionId = parkSectionId;
+        }
+
         public int getParkSeatId() {
             return parkSeatId;
         }
@@ -108,19 +129,19 @@ public class ParkingOrderListBean {
             this.parkSeatId = parkSeatId;
         }
 
-        public Object getVehicleNo() {
+        public String getVehicleNo() {
             return vehicleNo;
         }
 
-        public void setVehicleNo(Object vehicleNo) {
+        public void setVehicleNo(String vehicleNo) {
             this.vehicleNo = vehicleNo;
         }
 
-        public Object getVehicleType() {
+        public String getVehicleType() {
             return vehicleType;
         }
 
-        public void setVehicleType(Object vehicleType) {
+        public void setVehicleType(String vehicleType) {
             this.vehicleType = vehicleType;
         }
 
@@ -140,6 +161,14 @@ public class ParkingOrderListBean {
             this.parkingTime = parkingTime;
         }
 
+        public Object getLeaveTime() {
+            return leaveTime;
+        }
+
+        public void setLeaveTime(Object leaveTime) {
+            this.leaveTime = leaveTime;
+        }
+
         public String getPayStatus() {
             return payStatus;
         }
@@ -148,28 +177,25 @@ public class ParkingOrderListBean {
             this.payStatus = payStatus;
         }
 
-        public String getMobileUrl() {
-            return mobileUrl;
-        }
-
-        public void setMobileUrl(String mobileUrl) {
-            this.mobileUrl = mobileUrl;
-        }
-
         @Override
         public String toString() {
             return "DatasBean{" +
                     "parkingOrderId=" + parkingOrderId +
                     ", recordNo='" + recordNo + '\'' +
+                    ", parkId=" + parkId +
+                    ", parkSectionId=" + parkSectionId +
                     ", parkSeatId=" + parkSeatId +
-                    ", vehicleNo=" + vehicleNo +
-                    ", vehicleType=" + vehicleType +
+                    ", vehicleNo='" + vehicleNo + '\'' +
+                    ", vehicleType='" + vehicleType + '\'' +
                     ", isParking='" + isParking + '\'' +
                     ", parkingTime=" + parkingTime +
+                    ", leaveTime=" + leaveTime +
                     ", payStatus='" + payStatus + '\'' +
-                    ", mobileUrl='" + mobileUrl + '\'' +
                     '}';
         }
+
+
+
     }
 
     @Override

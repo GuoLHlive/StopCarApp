@@ -1,5 +1,10 @@
 package com.example.zoway.stopcarapp.bean;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.android.databinding.library.baseAdapters.BR;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +69,7 @@ public class PartSeatBean {
         this.datas = datas;
     }
 
-    public static class DatasBean {
+    public static class DatasBean{
         /**
          * parkSeatId : 0
          * seatNo : 10000
@@ -88,13 +93,14 @@ public class PartSeatBean {
         public void setParkSeatId(int parkSeatId) {
             this.parkSeatId = parkSeatId;
         }
-
-        public String getSeatNo() {
+         public String getSeatNo() {
             return seatNo;
         }
 
         public void setSeatNo(String seatNo) {
             this.seatNo = seatNo;
+
+
         }
 
         public int getSectionId() {
@@ -121,12 +127,14 @@ public class PartSeatBean {
             this.status = status;
         }
 
+
         public String getIsParking() {
             return isParking;
         }
 
         public void setIsParking(String isParking) {
             this.isParking = isParking;
+
         }
     }
 }

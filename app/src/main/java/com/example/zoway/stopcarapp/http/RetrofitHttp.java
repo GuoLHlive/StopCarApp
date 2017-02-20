@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.zoway.stopcarapp.MyApp;
+import com.example.zoway.stopcarapp.adapter.MainRecyclerAdapter;
 import com.example.zoway.stopcarapp.api.config.Config;
+import com.example.zoway.stopcarapp.bean.ParkingOrderListBean;
+import com.example.zoway.stopcarapp.bean.PartSeatBean;
+import com.example.zoway.stopcarapp.bean.UIsBean;
 import com.example.zoway.stopcarapp.service.ParkingWebSocket;
 import com.example.zoway.stopcarapp.util.SharedPreferencesUtils;
 
@@ -19,14 +22,16 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.Preferences;
 
 import okhttp3.Connection;
+
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.Headers;
@@ -84,32 +89,34 @@ public class RetrofitHttp {
 //            });
 //            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-//            CookieJar cookieJar = new CookieJar() {
-//                private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
-//                @Override
-//                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-//                    cookieStore.put(url.host(), cookies);
+            CookieJar cookieJar = new CookieJar() {
+                private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+                @Override
+                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    cookieStore.put(url.host(), cookies);
 //                    SharedPreferencesUtils.setParam(context,"cookies",cookies);
-//                }
-//
-//                @Override
-//                public List<Cookie> loadForRequest(HttpUrl url) {
-//                    List<Cookie> cookies = cookieStore.get(url.host());
-//                    return cookies != null ? cookies : new ArrayList<Cookie>();
-//                }
-//            };
+                }
+
+                @Override
+                public List<Cookie> loadForRequest(HttpUrl url) {
+                    List<Cookie> cookies = cookieStore.get(url.host());
+//                    List<Cookie> cookies =  (ArrayList<Cookie>)SharedPreferencesUtils.getParam(context, "cookies", null);
+                    return cookies != null ? cookies : new ArrayList<Cookie>();
+                }
+            };
 
             //代理
             Proxy proxy = new Proxy(Proxy.Type.HTTP,new InetSocketAddress(ip,port));
 
-            ReadCookiesInterceptor readCookiesInterceptor = new ReadCookiesInterceptor(context);
-            SaveCookiesInterceptor saveCookiesInterceptor = new SaveCookiesInterceptor(context);
+//            ReadCookiesInterceptor readCookiesInterceptor = new ReadCookiesInterceptor(context);
+//            SaveCookiesInterceptor saveCookiesInterceptor = new SaveCookiesInterceptor(context);
 
             OkHttpClient build = new OkHttpClient.Builder()
-//                    .cookieJar(cookieJar)
+                    .cookieJar(cookieJar)
+
                     .addInterceptor(httpLoggingInterceptor)
-                    .addInterceptor(readCookiesInterceptor)
-                    .addInterceptor(saveCookiesInterceptor)
+//                    .addInterceptor(readCookiesInterceptor)
+//                    .addInterceptor(saveCookiesInterceptor)
                     .addInterceptor(new Interceptor() {
                         @Override
                         public Response intercept(Chain chain) throws IOException {
@@ -143,11 +150,18 @@ public class RetrofitHttp {
     }
 
 
-    public static void openWebSocket(){
+    public static void openWebSocket(PartSeatBean partSeatBean, ParkingOrderListBean parkingOrderListBean, MainRecyclerAdapter adapter){
         if (mWebSocket!=null){
-            mWebSocket.openWebSocket();
+            mWebSocket.openWebSocket(partSeatBean,parkingOrderListBean,adapter);
         }
     }
+
+    public static void openWebSocket(UIsBean uIsBean){
+        if (mWebSocket!=null){
+            mWebSocket.openWebSocket(uIsBean);
+        }
+    }
+
 
     public static void stopWebSocket(){
         if(mWebSocket!=null){

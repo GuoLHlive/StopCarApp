@@ -8,10 +8,10 @@ public class ParkingOrderDetailBean {
 
     /**
      * success : true
-     * date : 2017-01-18 15:12:57
+     * date : 2017-02-16 16:51:05
      * type : data
      * code : 0
-     * data : {"parkingOrderId":0,"recordNo":"PAA1000020170117162800","parkId":0,"parkSectionId":0,"parkSeatId":0,"vehicleNo":"粤X12345","vehicleType":"02","isParking":"yes","isSpecial":"no","parkingTime":1484641970000,"payStatus":"no_pay","dueFare":null,"mobileUrl":"http://www.baidu.com"}
+     * data : {"parkingOrderId":66,"recordNo":"PAA1000120170216162913","parkId":0,"parkSectionId":0,"parkSeatId":-3,"vehicleNo":"粤X12345","vehicleType":"02","isParking":"no","isSpecial":"no","parkingTime":1487233753000,"leaveTime":1487234338000,"payStatus":"no_pay","dueFare":0,"realFare":0,"mobileUrl":"http://www.baidu.com"}
      */
 
     private boolean success;
@@ -62,18 +62,20 @@ public class ParkingOrderDetailBean {
 
     public static class DataBean {
         /**
-         * parkingOrderId : 0
-         * recordNo : PAA1000020170117162800
+         * parkingOrderId : 66
+         * recordNo : PAA1000120170216162913
          * parkId : 0
          * parkSectionId : 0
-         * parkSeatId : 0
+         * parkSeatId : -3
          * vehicleNo : 粤X12345
          * vehicleType : 02
-         * isParking : yes
+         * isParking : no
          * isSpecial : no
-         * parkingTime : 1484641970000
+         * parkingTime : 1487233753000
+         * leaveTime : 1487234338000
          * payStatus : no_pay
-         * dueFare : null
+         * dueFare : 0
+         * realFare : 0
          * mobileUrl : http://www.baidu.com
          */
 
@@ -87,8 +89,10 @@ public class ParkingOrderDetailBean {
         private String isParking;
         private String isSpecial;
         private long parkingTime;
+        private long leaveTime;
         private String payStatus;
-        private Object dueFare;
+        private int dueFare;
+        private int realFare;
         private String mobileUrl;
 
         public int getParkingOrderId() {
@@ -171,6 +175,14 @@ public class ParkingOrderDetailBean {
             this.parkingTime = parkingTime;
         }
 
+        public long getLeaveTime() {
+            return leaveTime;
+        }
+
+        public void setLeaveTime(long leaveTime) {
+            this.leaveTime = leaveTime;
+        }
+
         public String getPayStatus() {
             return payStatus;
         }
@@ -179,12 +191,20 @@ public class ParkingOrderDetailBean {
             this.payStatus = payStatus;
         }
 
-        public Object getDueFare() {
+        public int getDueFare() {
             return dueFare;
         }
 
-        public void setDueFare(Object dueFare) {
+        public void setDueFare(int dueFare) {
             this.dueFare = dueFare;
+        }
+
+        public int getRealFare() {
+            return realFare;
+        }
+
+        public void setRealFare(int realFare) {
+            this.realFare = realFare;
         }
 
         public String getMobileUrl() {
@@ -194,35 +214,5 @@ public class ParkingOrderDetailBean {
         public void setMobileUrl(String mobileUrl) {
             this.mobileUrl = mobileUrl;
         }
-
-        @Override
-        public String toString() {
-            return "DataBean{" +
-                    "parkingOrderId=" + parkingOrderId +
-                    ", recordNo='" + recordNo + '\'' +
-                    ", parkId=" + parkId +
-                    ", parkSectionId=" + parkSectionId +
-                    ", parkSeatId=" + parkSeatId +
-                    ", vehicleNo='" + vehicleNo + '\'' +
-                    ", vehicleType='" + vehicleType + '\'' +
-                    ", isParking='" + isParking + '\'' +
-                    ", isSpecial='" + isSpecial + '\'' +
-                    ", parkingTime=" + parkingTime +
-                    ", payStatus='" + payStatus + '\'' +
-                    ", dueFare=" + dueFare +
-                    ", mobileUrl='" + mobileUrl + '\'' +
-                    '}';
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "ParkingOrderDetailBean{" +
-                "success=" + success +
-                ", date='" + date + '\'' +
-                ", type='" + type + '\'' +
-                ", code='" + code + '\'' +
-                ", data=" + data +
-                '}';
     }
 }
