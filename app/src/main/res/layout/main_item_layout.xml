@@ -35,7 +35,7 @@
         <RelativeLayout
             android:id="@+id/main_item_view"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="@dimen/main_item_size"
             app:StopBackground="@{uisBean.lists.get(postion).isParking}"
             android:onClick="@{uisBean.lists.get(postion).payOnClick}"
             >

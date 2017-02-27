@@ -52,7 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity{
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_3||keyCode==KeyEvent.KEYCODE_BACK){
+        if (keyCode==KeyEvent.KEYCODE_BACK){
             Log.i("RetrofitLog","activitys:"+activitys.size());
             try {
                 if (activitys.size()==1){

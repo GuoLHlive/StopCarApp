@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.zoway.stopcarapp.R;
 import com.example.zoway.stopcarapp.bean.PayUIBean;
+import com.example.zoway.stopcarapp.bean.UIsBean;
 import com.example.zoway.stopcarapp.databinding.ActivityTakeOcrPhotoBinding;
 import com.example.zoway.stopcarapp.file.SystemService;
 import com.example.zoway.stopcarapp.ocr.BitmapHandle;
@@ -89,7 +91,7 @@ public class TakeOcrPhotoActivity extends BaseActivity {
     private String compressFilePath = null;//压缩后图片路径
 
     private int parkingOrderId;
-
+    private String seatNo;
 
     private Handler handler = new Handler() {
 
@@ -119,7 +121,7 @@ public class TakeOcrPhotoActivity extends BaseActivity {
                             }
                         }else {
                             Intent intent = new Intent(activity,PayActivity.class);
-                            intent.putExtra("PayUI",new PayUIBean(true,result,parkingOrderId));
+                            intent.putExtra("PayUI",new PayUIBean(true,result,parkingOrderId,seatNo));
                             activity.startActivity(intent);
 
                         }
@@ -153,7 +155,9 @@ public class TakeOcrPhotoActivity extends BaseActivity {
         binding.setLightBtnTxt("开灯");
         mPicture = new PitcCallback();
         //订单号
-        parkingOrderId = intent.getIntExtra("parkingOrderId", 1000);
+        Bundle extras = intent.getExtras();
+        seatNo = extras.getString("seatNo");
+        parkingOrderId = extras.getInt("parkingOrderId");
 
 
     }

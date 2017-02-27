@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
+import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -32,25 +33,46 @@ public class SystemService {
     public static String RID = null;
     private static String appFileName = "Zparking";
 
+
     //目录
     //系统SD卡根目录
     public static File rootFile = null;
+    public static File newRootFile = null; //新机
+    //程序目录
+    public static File appFile = null;
     static {
+//      新机SD卡路径
+        newRootFile = new File(getSDPath());
+
         //查找外置SD卡
+        //旧机
         for(int i = 2; i >= 0; i--){
             String pathStr = "/storage/sdcard" + i;
             File path = new File(pathStr);
             if(path.exists()){
                 rootFile = path;
-
                 break;
             }
         }
         //rootFile = Environment.getExternalStorageDirectory();
 
         //读取SD卡中的 RID文件
-        File idFile = new File(rootFile.getPath() + "/" + appFileName + "/RID");
-        if(idFile.exists()){
+        //判断是否存在RID 旧机的路径:sd0/Zparking 新机5.0路径sk/0/Zparking
+        File idFile = new File(rootFile.getAbsolutePath() + "/" + appFileName + "/RID");
+        File newIdFile = new File(newRootFile.getAbsolutePath() + "/" + appFileName + "/RID");
+//        Log.i("Bean",idFile.getAbsolutePath());
+        if (idFile.exists()){
+            ReadRid(idFile);
+           appFile =  new File(rootFile.getAbsolutePath() + "/" + appFileName);
+        }else if (newIdFile.exists()){
+            ReadRid(newIdFile);
+            appFile =  new File(newRootFile.getAbsolutePath() + "/" + appFileName);
+        }
+
+    }
+
+    private static void ReadRid(File idFile) {
+//            Log.i("Bean",idFile.getName());
             BufferedReader reader = null;
             try {
                 System.out.println("以行为单位读取文件内容，一次读一行");
@@ -67,11 +89,11 @@ public class SystemService {
                     }
                 }
             }
-        }
     }
 
-    //程序目录
-    public static final File appFile = new File(rootFile.getAbsolutePath() + "/" + appFileName);
+
+
+
     //数据文件目录
     public static final File dbFile = new File(appFile.getAbsolutePath() + "/db");
     //日志目录
@@ -103,6 +125,19 @@ public class SystemService {
     public static void init(){
         //设置好文件目录
     }
+
+    //返回SD卡目录
+    public static String getSDPath(){
+        File sdDir = null;
+        boolean sdCardExist = Environment.getExternalStorageState()
+                .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+        if (sdCardExist)
+        {
+            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        }
+        return sdDir.toString();
+    }
+
 
     public static String getMEID(){
         String v = null;

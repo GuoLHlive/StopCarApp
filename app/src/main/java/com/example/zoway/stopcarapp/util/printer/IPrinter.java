@@ -6,4 +6,6 @@ package com.example.zoway.stopcarapp.util.printer;
 public interface IPrinter {
     //boolean tryActivatePrinter();
     void print(String content) throws Exception;
+
+
 }

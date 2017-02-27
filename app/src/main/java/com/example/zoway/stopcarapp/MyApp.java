@@ -19,6 +19,11 @@ import com.example.zoway.stopcarapp.module.RetrofitUtilModule;
 import com.example.zoway.stopcarapp.util.SharedPreferencesUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * Created by Administrator on 2016/12/14.
@@ -27,6 +32,9 @@ public class MyApp extends Application {
     private AppComponent appComponent;
     private static MyApp myApp;
 
+
+    public static Map<Integer,String> PayState;
+
     //SharePreferences存储地址
     private String absolutePath = "";
 
@@ -34,6 +42,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         myApp = this;
+        PayState = new HashMap<>();
         setDraggerConfig();
         //设置初始化
         setSharePreferences();
@@ -50,6 +59,10 @@ public class MyApp extends Application {
     }
     public static MyApp getApp(){
         return myApp;
+    }
+
+    public static Map<Integer,String> getPayState(){
+        return PayState;
     }
 
     private void setDraggerConfig() {

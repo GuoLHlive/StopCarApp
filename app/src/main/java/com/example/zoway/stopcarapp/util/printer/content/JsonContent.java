@@ -23,7 +23,8 @@ public class JsonContent {
     private String out_time;
     private String money;
     private String qrcode;
-
+    private int state;
+    private String userName;
 
     public String getLicense_plate() {
         return license_plate;
@@ -81,7 +82,22 @@ public class JsonContent {
         this.qrcode = qrcode;
     }
 
-//    @Override
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    //    @Override
 //    public String toString() {
 //        return  "车牌号：" + license_plate + '\n' +
 //                "车位编号：" + stop_number + '\n' +

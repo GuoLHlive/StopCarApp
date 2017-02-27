@@ -74,8 +74,8 @@ public class ParkingOrderDetailBean {
          * parkingTime : 1487233753000
          * leaveTime : 1487234338000
          * payStatus : no_pay
-         * dueFare : 0
-         * realFare : 0
+         * dueFare : 0 //总额
+         * realFare : 0//已支付
          * mobileUrl : http://www.baidu.com
          */
 
@@ -91,8 +91,8 @@ public class ParkingOrderDetailBean {
         private long parkingTime;
         private long leaveTime;
         private String payStatus;
-        private int dueFare;
-        private int realFare;
+        private double dueFare;
+        private double realFare;
         private String mobileUrl;
 
         public int getParkingOrderId() {
@@ -191,19 +191,19 @@ public class ParkingOrderDetailBean {
             this.payStatus = payStatus;
         }
 
-        public int getDueFare() {
+        public double getDueFare() {
             return dueFare;
         }
 
-        public void setDueFare(int dueFare) {
+        public void setDueFare(double dueFare) {
             this.dueFare = dueFare;
         }
 
-        public int getRealFare() {
+        public double getRealFare() {
             return realFare;
         }
 
-        public void setRealFare(int realFare) {
+        public void setRealFare(double realFare) {
             this.realFare = realFare;
         }
 
@@ -213,6 +213,27 @@ public class ParkingOrderDetailBean {
 
         public void setMobileUrl(String mobileUrl) {
             this.mobileUrl = mobileUrl;
+        }
+
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "parkingOrderId=" + parkingOrderId +
+                    ", recordNo='" + recordNo + '\'' +
+                    ", parkId=" + parkId +
+                    ", parkSectionId=" + parkSectionId +
+                    ", parkSeatId=" + parkSeatId +
+                    ", vehicleNo='" + vehicleNo + '\'' +
+                    ", vehicleType='" + vehicleType + '\'' +
+                    ", isParking='" + isParking + '\'' +
+                    ", isSpecial='" + isSpecial + '\'' +
+                    ", parkingTime=" + parkingTime +
+                    ", leaveTime=" + leaveTime +
+                    ", payStatus='" + payStatus + '\'' +
+                    ", dueFare=" + dueFare +
+                    ", realFare=" + realFare +
+                    ", mobileUrl='" + mobileUrl + '\'' +
+                    '}';
         }
     }
 }

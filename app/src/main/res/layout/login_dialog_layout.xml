@@ -5,13 +5,13 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:gravity="center"
-
+        android:background="@color/white"
 
         >
 
             <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="200dp"
+                android:layout_width="@dimen/login_dialog_size_width"
+                android:layout_height="@dimen/login_dialog_size_height"
                 android:orientation="vertical"
                 android:layout_centerInParent="true"
                 android:padding="2dp"

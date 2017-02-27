@@ -79,8 +79,8 @@ public class Login_Dialog_View extends AlertDialog {
     private void initData() {
         mEsc = (Button) this.findViewById(R.id.mEsc);
         mSave = (Button) this.findViewById(R.id.mSave);
-        mET_password = (EditText) this.findViewById(R.id.login_username);
-        mEt_username = (EditText) this.findViewById(R.id.login_password);
+        mET_password = (EditText) this.findViewById(R.id.login_password);
+        mEt_username = (EditText) this.findViewById(R.id.login_username);
     }
 
     private void showToast(String s){

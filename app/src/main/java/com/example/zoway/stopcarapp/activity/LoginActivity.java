@@ -12,6 +12,7 @@ import com.example.zoway.stopcarapp.MainActivity;
 import com.example.zoway.stopcarapp.R;
 import com.example.zoway.stopcarapp.api.lmpl.BaseSubscriber;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
+import com.example.zoway.stopcarapp.bean.Config;
 import com.example.zoway.stopcarapp.bean.LoginReturnBean;
 import com.example.zoway.stopcarapp.bean.LoginUserBean;
 import com.example.zoway.stopcarapp.bean.post.LoginPostBean;
@@ -21,6 +22,9 @@ import com.example.zoway.stopcarapp.file.SystemService;
 import com.example.zoway.stopcarapp.util.showToast;
 import com.example.zoway.stopcarapp.view.Login_Dialog_View;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -60,8 +64,28 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void Input(LoginUserBean s) {
                         if (s != null){
-                            Toast.makeText(activity,s.toString(),Toast.LENGTH_SHORT).show();
-                        }
+//                            Toast.makeText(activity,s.toString(),Toast.LENGTH_SHORT).show();
+                        loginNfcInteractor.loginFnc("Login.do", demoForPostJson(s), new BaseSubscriber<String>() {
+                            @Override
+                            protected void onSuccess(String result) {
+                                Log.i("Bean",result);
+                                Gson gson = new Gson();
+                                LoginReturnBean loginReturnBean = gson.fromJson(result, LoginReturnBean.class);
+                                String code = loginReturnBean.getCode();
+//                    Log.i("Bean","code"+code);
+                                if ("0".equals(code)){
+                                    activitys.remove(activity);
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    activity.startActivity(intent);
+                                    activity.finish();
+                                }else {
+                                    showToast.showToastTxt(activity,loginReturnBean.getMsg());
+                                }
+
+                            }
+                        });
+
+                    }
                     }
                 });
                 dialogView.setCanceledOnTouchOutside(true);
@@ -72,6 +96,28 @@ public class LoginActivity extends BaseActivity {
 
 
     }
+
+
+    private String demoForPostJson(LoginUserBean demo){
+
+        JSONObject jsonObject = new JSONObject();
+
+        String password = demo.getPassword();
+        String workerNo = demo.getWorkerNo();
+
+        try {
+            jsonObject.put("deviceId", Config.USERRID);
+            jsonObject.put("longitude","0.0");
+            jsonObject.put("latitude","0.0");
+            jsonObject.put("workerNo",workerNo);
+            jsonObject.put("password",password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i("Bean",jsonObject.toString());
+        return jsonObject.toString();
+    }
+
 
 
     @Override

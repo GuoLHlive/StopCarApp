@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
-ext{
-    applicationName = '停车管理'//apk名
-}
+//ext{
+//    applicationName = '停车管理'//apk名
+//}
 
 repositories {
     maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
@@ -167,29 +167,31 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.android.support:recyclerview-v7:25.0.1'
+        compile fileTree(include: ['*.jar'], dir: 'libs')
+        testCompile 'junit:junit:4.12'
+        compile 'com.android.support:appcompat-v7:25.0.1'
+        compile 'com.android.support:recyclerview-v7:25.0.1'
 
 
-    //dagger2
-    compile 'com.google.dagger:dagger:2.5'
-    apt 'com.google.dagger:dagger-compiler:2.5'
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+        //dagger2
+        compile 'com.google.dagger:dagger:2.5'
+        apt 'com.google.dagger:dagger-compiler:2.5'
+        provided 'org.glassfish:javax.annotation:10.0-b28'
 
 
-    //Retrofit2.0
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
-    compile 'com.squareup.okhttp3:okhttp:3.3.1'
-    compile 'com.squareup.okhttp3:okhttp-ws:3.3.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
+        //Retrofit2.0
+        compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+        compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+        compile 'com.squareup.okhttp3:okhttp:3.3.1'
+        compile 'com.squareup.okhttp3:okhttp-ws:3.3.1'
+        compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 
-    //rxAndroid
-    compile 'io.reactivex:rxandroid:1.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
-    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+        //rxAndroid
+        compile 'io.reactivex:rxandroid:1.2.0'
+        compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
+        compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+
 
 
 
@@ -198,13 +200,13 @@ dependencies {
 
 
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
-    compile files('libs/pki.jar')
-    compile files('libs/plate_id_sdk.jar')
-    compile files('libs/qrcode.jar')
-    compile files('libs/android_auth.jar')
-    compile files('libs/eptapilibrary.jar')
-    compile files('libs/core-3.2.1.jar')
-    compile files('libs/smartdevicesdk.jar')
+        compile files('libs/pki.jar')
+        compile files('libs/plate_id_sdk.jar')
+        compile files('libs/qrcode.jar')
+        compile files('libs/android_auth.jar')
+        compile files('libs/eptapilibrary.jar')
+        compile files('libs/core-3.2.1.jar')
+        compile files('libs/smartdevicesdk.jar')
 
 
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.example.zoway.stopcarapp.activity.Admin2Activity;
@@ -20,6 +21,7 @@ import com.example.zoway.stopcarapp.activity.EscapeRecordActivity;
 import com.example.zoway.stopcarapp.adapter.MainRecyclerAdapter;
 
 import com.example.zoway.stopcarapp.api.lmpl.BaseSubscriber;
+import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
 import com.example.zoway.stopcarapp.bean.ParkingOrderListBean;
@@ -61,6 +63,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private PartBaseInfoBean baseInfoBean;
     private PartSeatBean partSeatBean;
     private ParkingOrderListBean parkingOrderListBean;
+    private LoginNfcInteractor loginNfcInteractor;
+
     //数据UI界面
     private UIsBean uIsBean;
 
@@ -73,15 +77,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         @Override
             public void run() {
             if (upTimeData!=null&&upTimeData.size()!=0){
-                time = time +1000;
                 for (int i=0;i<upTimeData.size();i++){
                     UIsBean.UIBean uiBean = upTimeData.get(i);
                     Long parkingTime = uiBean.getParkingTime();
                     if (parkingTime==0L){
                         uiBean.setStringParkingTime("");
                     }
-                    uiBean.setStringParkingTime(LongTimeOrString.stringStopTime(parkingTime,time));
+                    uiBean.setStringParkingTime(LongTimeOrString.stringStopTime_MainActivity(parkingTime,time));
+
                 }
+                time = time +1000;
             }
             }
     };
@@ -102,12 +107,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         //停车场信息
         parkingOrderInteractor = appComponent.getParkingOrderInteractor();
         //车位信息
-
         uIsBean = appComponent.getUIsBean();
+        //用户信息
+        loginNfcInteractor = appComponent.getLoginNfcInteractor();
+
 
         time = new Date().getTime();
         //需要计时的车位数据存储
         upTimeData = uIsBean.getUpTimeData();
+
+
+
 
     }
 
@@ -160,7 +170,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             protected void onSuccess(String result) {
                 Log.i("Bean","parkingOrderListBean加载成功!");
                 parkingOrderListBean = gson.fromJson(result, ParkingOrderListBean.class);
-                UpDataUI();
+                downUserInfo(gson);
+            }
+        });
+
+    }
+
+    //拿取用户信息
+    private void downUserInfo(final Gson gson){
+
+        loginNfcInteractor.loginFnc("LoginWorkerDetail.do", "", new BaseSubscriber<String>() {
+            @Override
+            protected void onSuccess(String result) {
+                UIsBean.UserInfo userInfo = gson.fromJson(result, UIsBean.UserInfo.class);
+                uIsBean.setUserInfo(userInfo);
+                if (partSeatBean.getDatas() != null){
+                    UpDataUI();
+                    return;
+                }
+                Toast.makeText(activity,"网络发生未知错误，请把程序退出，重新登录!",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -181,7 +209,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         for (int i=0;i<partDatas.size();i++){
             PartSeatBean.DatasBean partData = partDatas.get(i);
             UIsBean.UIBean uiBean = new UIsBean.UIBean(partData.getParkSeatId(),
-                    partData.getSeatNo(),10000,
+                    partData.getSeatNo(),1000000,
                     activity,View.GONE,"",partData.getIsParking(),
                     "","",0L,0L);
             lists.add(uiBean);
@@ -199,20 +227,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     if (orderId == parkSeatId){
                         Log.i("ParkingWebSocket","orderId:"+orderId+"");
                         uiBean.setParkingOrderId(orderData.getParkingOrderId());
-
                         uiBean.setPayStatus(orderData.getPayStatus());
                         uiBean.setVehicleNo(orderData.getVehicleNo());
                         uiBean.setParkingTime(orderData.getParkingTime());
                         uiBean.setIsParking(orderData.getIsParking());
+
                         //已经支付
-                        if ("free".equals(orderData.getPayStatus())){
-                            uiBean.setIsParking("free");
-                        }
+//                        if ("payed".equals(orderData.getPayStatus())){
+//                            //修改背景
+//                            uiBean.setIsParking("free");
+//                        }
 
                         if (uiBean.getVehicleNo()==null){
                             uiBean.setPhoto(false);
+                            uiBean.setIsParking("yes");
                         }else {
                             uiBean.setPhoto(true);
+                            uiBean.setIsParking("yes_photo");
                         }
                         upTimeData.add(uiBean);
                         isTask = true;
@@ -225,7 +256,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             }
         }
        uIsBean.setLists(lists);
-        Log.i("Bean","list:"+lists.toString());
+        Log.i("Bean","list:"+uIsBean.getLists());
         //把数据写入adapter
         binding.mRecyclerView.setLayoutManager(new GridLayoutManager(activity,2));
         adapter = new MainRecyclerAdapter(uIsBean);

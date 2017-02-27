@@ -7,7 +7,7 @@ import com.example.zoway.stopcarapp.databinding.ActivityAdminBinding;
 
 /**
  * Created by Administrator on 2016/12/13.
- *  完成支付的界面
+ *  完成拍照的界面
  *
  */
 public class CompleteActivity extends BaseActivity {

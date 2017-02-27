@@ -9,8 +9,8 @@
         >
 
             <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="200dp"
+                android:layout_width="@dimen/pay_dialog_size_width"
+                android:layout_height="@dimen/pay_dialog_size_height"
                 android:orientation="vertical"
                 android:layout_centerInParent="true"
                 >

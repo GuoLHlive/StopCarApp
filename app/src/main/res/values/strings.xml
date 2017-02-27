@@ -30,10 +30,33 @@
     <string name="escape_sure">1确定逃费</string>
     <string name="escape_back">3返    回</string>
 
-    <string name="pay_cash">1现金收费</string>
-    <string name="pay_print">2补打凭条</string>
-    <string name="pay_back">3返    回</string>
-    
+    <string name="pay_save">1保存订单</string>
+    <string name="pay_photo">2重新拍照</string>
+    <string name="pay_print">3补打凭条</string>
+
+    <string name="pay_cash">1确定收费</string>
+    <string name="pay_task">2确定走费</string>
+    <string name="pay_escape">3确定逃费</string>
+    <string name="pay_r_print">4补打凭条</string>
+
+
+
+
+    <string name="pay_print_money">1打印收据</string>
+
+    <string name="pay_taskPhone_print">1补打凭条</string>
+
+    <string name="pay_title">订单信息</string>
+
+
+    <!-- payState 订单当前状态 -->
+
+    <string name="takePhoto">takePhoto</string>
+    <string name="savePhoto">savePhoto</string>
+    <string name="payCharge">payCharge</string>
+    <string name="payPrint">payPrint</string>
+
+
     <string name="completion_print">1补打凭条</string>
     <string name="completion_back">3返     回</string>
 

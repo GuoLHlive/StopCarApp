@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.zoway.stopcarapp.bean.Config;
 import com.example.zoway.stopcarapp.dev.IDevService;
 import com.example.zoway.stopcarapp.util.printer.IPrinter;
 import com.example.zoway.stopcarapp.util.printer.content.ContentType;
@@ -206,14 +207,36 @@ public class WW808EmmcPrinter implements IPrinter {
                     @Override
                     public void onNext(JsonContent jsonContent) {
 
-                        try {
-                            byte[] json = jsonContent.toString().getBytes("GBK");
-                            printerClass.write(json);
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
+
+                        if (jsonContent.getState()==2){//收据单
+                            try {
+                                String txt1 = jsonContent.toString()+  "操作员  ："+jsonContent.getUserName()+"\n"
+                                        +"\n"+Config.PRINTTEXT2+"\n";
+                                byte[] json = txt1.toString().getBytes("GBK");
+                                printerClass.printText(""+"\n");
+                                printerClass.write(json);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        printerClass.printImage(BarcodeCreater.encode2dAsBitmap(jsonContent.getQrcode(), 300, 300));
-                        printerClass.printText(""+"\n");
+                        if (jsonContent.getState() == 1){
+
+                            String txt = jsonContent.getLicense_plate()+"\n"+jsonContent.getStop_number()+"\n"+
+                            "操作员  ："+jsonContent.getUserName()+"\n"+Config.PRINTTEXT1;
+                            try {
+                                printerClass.printText(""+"\n");
+                                byte[] json = txt.getBytes("GBK");
+                                printerClass.write(json);
+                                printerClass.printText(""+"\n");
+                                printerClass.printImage(BarcodeCreater.encode2dAsBitmap(jsonContent.getQrcode(), 300, 300));
+                                printerClass.printText(""+"\n");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+
                     }
                 });
     }

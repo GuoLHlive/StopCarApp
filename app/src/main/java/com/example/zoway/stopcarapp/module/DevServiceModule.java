@@ -6,6 +6,7 @@ import com.example.zoway.stopcarapp.MyApp;
 import com.example.zoway.stopcarapp.dev.DefaultDevService;
 import com.example.zoway.stopcarapp.dev.IDevService;
 import com.example.zoway.stopcarapp.dev.P900.P990DevService;
+import com.example.zoway.stopcarapp.dev.msm8909.Msm8909DevService;
 import com.example.zoway.stopcarapp.dev.ww808_emmc.WW808EmmcDevService;
 
 import javax.inject.Singleton;
@@ -28,7 +29,9 @@ public class DevServiceModule {
             iDevService = new P990DevService(MyApp.getApp());
         }else if(model.equals("ww808_emmc")){
             iDevService = new WW808EmmcDevService(MyApp.getApp());
-        }else{
+        }else if (model.equals("msm8909")){
+            iDevService = new Msm8909DevService(MyApp.getApp());
+        }else {
             iDevService = new DefaultDevService(MyApp.getApp());
         }
         return iDevService;
