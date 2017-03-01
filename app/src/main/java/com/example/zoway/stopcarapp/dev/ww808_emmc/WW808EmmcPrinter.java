@@ -211,7 +211,7 @@ public class WW808EmmcPrinter implements IPrinter {
                         if (jsonContent.getState()==2){//收据单
                             try {
                                 String txt1 = jsonContent.toString()+  "操作员  ："+jsonContent.getUserName()+"\n"
-                                        +"\n"+Config.PRINTTEXT2+"\n";
+                                        +"\n"+Config.PRINTTEXT2+"\n\n";
                                 byte[] json = txt1.toString().getBytes("GBK");
                                 printerClass.printText(""+"\n");
                                 printerClass.write(json);
@@ -229,6 +229,7 @@ public class WW808EmmcPrinter implements IPrinter {
                                 printerClass.write(json);
                                 printerClass.printText(""+"\n");
                                 printerClass.printImage(BarcodeCreater.encode2dAsBitmap(jsonContent.getQrcode(), 300, 300));
+                                printerClass.printText(""+"\n");
                                 printerClass.printText(""+"\n");
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();

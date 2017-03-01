@@ -93,12 +93,12 @@
             <Button
                 android:id="@+id/pay_bnt_one"
                 style="@style/ButtonStyle"
-                android:text="@string/pay_save"
+                android:visibility="invisible"
                 />
             <Button
                 android:id="@+id/pay_bnt_two"
                 style="@style/ButtonStyle"
-                android:text="@string/pay_photo"
+                android:visibility="invisible"
                 />
         </LinearLayout>
         <LinearLayout
@@ -110,7 +110,7 @@
             <Button
                 android:id="@+id/pay_bnt_three"
                 style="@style/ButtonStyle"
-                android:text="@string/pay_print"
+                android:visibility="invisible"
                 />
             <Button
                 android:id="@+id/pay_bnt_four"

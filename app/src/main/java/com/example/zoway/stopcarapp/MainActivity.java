@@ -24,6 +24,7 @@ import com.example.zoway.stopcarapp.api.lmpl.BaseSubscriber;
 import com.example.zoway.stopcarapp.api.lmpl.LoginNfcInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.ParkingOrderInteractor;
 import com.example.zoway.stopcarapp.api.lmpl.PartInteractor;
+import com.example.zoway.stopcarapp.bean.Config;
 import com.example.zoway.stopcarapp.bean.ParkingOrderListBean;
 import com.example.zoway.stopcarapp.bean.PartBaseInfoBean;
 import com.example.zoway.stopcarapp.bean.PartSeatBean;
@@ -33,6 +34,7 @@ import com.example.zoway.stopcarapp.databinding.ActivityMainBinding;
 import com.example.zoway.stopcarapp.http.RetrofitHttp;
 import com.example.zoway.stopcarapp.service.ParkingWebSocket;
 import com.example.zoway.stopcarapp.util.LongTimeOrString;
+import com.example.zoway.stopcarapp.util.SharedPreferencesUtils;
 import com.google.gson.Gson;
 
 
@@ -40,6 +42,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -143,6 +146,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             protected void onSuccess(String result) {
                 baseInfoBean = gson.fromJson(result,PartBaseInfoBean.class);
                 String title = baseInfoBean.getData().getName();
+                SharedPreferencesUtils.setParam(activity,Config.STOPTITLE,title);
                 binding.mainTitle.setText(title);
                 //拿取车位信息 Seat/BaseInfo.do
                 downSeatBaseInfo(gson);
@@ -216,14 +220,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         }
 
         //UI的数据加入(未完成的订单)
+        Map<Integer,ParkingOrderListBean.DatasBean> map = new HashMap<>();
         if (orderDatas!=null&&orderDatas.size()!=0){
             for (int i=0;i<orderDatas.size();i++){
                 ParkingOrderListBean.DatasBean orderData = orderDatas.get(i);
                 int orderId = orderData.getParkSeatId();
-                for (int j=0;j<lists.size();j++){
-                    UIsBean.UIBean uiBean = lists.get(j);
+                //筛选 取最新的
+                map.put(orderId,orderData);
+            }
+         //对比 把未处理的订单数据加入list
+
+
+            Iterator<Map.Entry<Integer, ParkingOrderListBean.DatasBean>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<Integer, ParkingOrderListBean.DatasBean> next = iterator.next();
+                Integer orderId = next.getKey();
+                ParkingOrderListBean.DatasBean orderData = next.getValue();
+                for (int i=0;i<lists.size();i++){
+                    UIsBean.UIBean uiBean = lists.get(i);
                     int parkSeatId = uiBean.getParkSeatId();
-                    Log.i("Bean","orderId"+orderId);
                     if (orderId == parkSeatId){
                         Log.i("ParkingWebSocket","orderId:"+orderId+"");
                         uiBean.setParkingOrderId(orderData.getParkingOrderId());
@@ -248,12 +263,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                         upTimeData.add(uiBean);
                         isTask = true;
                         //时间
-                        mTime = new Timer();
-                        mTime.schedule(mTimerTask,1000,1000);
+                        if (mTime == null){
+                            mTime = new Timer();
+                            mTime.schedule(mTimerTask,1000,1000);
+                        }
                     }
                 }
-
             }
+
+
+
         }
        uIsBean.setLists(lists);
         Log.i("Bean","list:"+uIsBean.getLists());

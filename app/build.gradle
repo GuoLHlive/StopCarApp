@@ -53,8 +53,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "buildTypeName", "开发"
-            resValue "string", "serverIP", "192.168.1.48"
-            resValue "integer", "serverPort", "8091"
+            resValue "string", "serverIP", "120.77.150.40"
+            resValue "integer", "serverPort", "8050"
 //            resValue "string", "serverIP", "221.4.165.162"
 //            resValue "integer", "serverPort", "8092"
             resValue "bool", "enableEditSetting", "true"
@@ -111,9 +111,9 @@ android {
             hastags {//有地磁版
                 resValue "string", "productFlavorName", "有地磁版"
                 resValue "string", "productFlavorCode", "hastag"
-                resValue "string", "serverAppHost", "192.168.1.48:8091"
+                resValue "string", "serverAppHost", "120.77.150.40:8050"
                 resValue "string", "serverAppPath", "ZparkingWorkerManagerWeb"
-                resValue "string", "serverVersionHost", "192.168.1.48:8091"
+                resValue "string", "serverVersionHost", "120.77.150.40:8050"
                 resValue "string", "serverVersionPath", "version"
                 resValue "string", "app_name", "${applicationName}"
             }

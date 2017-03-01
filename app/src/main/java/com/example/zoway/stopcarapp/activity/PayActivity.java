@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,6 +34,7 @@ import com.example.zoway.stopcarapp.module.DevComponent;
 import com.example.zoway.stopcarapp.module.DevServiceModule;
 import com.example.zoway.stopcarapp.util.BntNotRepeatClick;
 import com.example.zoway.stopcarapp.util.LongTimeOrString;
+import com.example.zoway.stopcarapp.util.SharedPreferencesUtils;
 import com.example.zoway.stopcarapp.view.Pay_Dialog_View;
 import com.google.gson.Gson;
 
@@ -82,6 +84,9 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     private UIsBean uIsBean;
     private String userName = "";
 
+    //停车路段名字
+    private String stopTitle;
+
     @Override
     protected int getLayoutId() {
         payUI = (PayUIBean) getIntent().getSerializableExtra("PayUI");
@@ -122,7 +127,13 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         if (data!=null){
             userName = data.getName();
         }
+
+
         addOnClick();
+        String title = (String) SharedPreferencesUtils.getParam(activity, Config.STOPTITLE, "");
+        String seatNo = payUI.getSeatNo();
+        stopTitle = "车位位置：["+title+"]" + seatNo;
+
 
     }
 
@@ -133,7 +144,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         if (payUI.isTakePhote()){
             CarNumber = payUI.getCarNumber();
             parkingOrderId = payUI.getParkingOrderId();
-            downParkingOrderInfoCarNumber();
+            initDataView();
         }else {
             parkingOrderId = payUI.getParkingOrderId();
             downParkingOrderInfo();
@@ -177,47 +188,71 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
 
     private void initDataView() {
 
-
-
         long thisTime = new Date().getTime();
-        if (data!=null){
-            double v = data.getDueFare() - data.getRealFare();
-            binding.payLicensePlate.setText("小型汽车： "+data.getVehicleNo());
-            binding.payStopNumber.setText("车位位置： "+payUI.getSeatNo());
-            binding.payLongTime.setText("停车时长： "+LongTimeOrString.longTimeOrString(data.getParkingTime()));
-            binding.payComeTime.setText("停驻时间："+LongTimeOrString.stringStopTime(data.getParkingTime(),thisTime));
-            binding.payOutTime.setText("当前时间： "+LongTimeOrString.longTimeOrString(thisTime));
-            binding.payStopMoney.setText("停车费用： "+data.getDueFare()+"元");
-            binding.payOweMoney.setText("欠        费："+String.valueOf(v)+"元");
-            binding.payMoney.setText("当前已付： "+data.getRealFare()+"元");
+        long parkingTime = 0L;
 
-            //修改PayActivity状态
-            String payStatus = data.getPayStatus();
-            if ("no_pay".equals(payStatus)){
-                if (data.getDueFare()>0.0){
-                    upDataPayState(Config.PAYCHARGE);
+            if (data==null){
+                binding.payLicensePlate.setText("小型汽车："+CarNumber);
+                ArrayList<UIsBean.UIBean> upTimeData = uIsBean.getUpTimeData();
+                for (int i=0;i<upTimeData.size();i++){
+                    UIsBean.UIBean uiBean = upTimeData.get(i);
+                    int timeParkingOrderId = uiBean.getParkingOrderId();
+                    if (timeParkingOrderId == parkingOrderId){
+                        parkingTime = uiBean.getParkingTime();
+                    }
+                }
+            }else {
+                double v = data.getDueFare() - data.getRealFare();
+                parkingTime = data.getParkingTime();
+                binding.payLicensePlate.setText("小型汽车："+data.getVehicleNo());
+                binding.payStopMoney.setText("停车费用："+data.getDueFare()+"元");
+                binding.payOweMoney.setText("欠        费："+String.valueOf(v)+"元");
+                binding.payMoney.setText("当前已付："+data.getRealFare()+"元");
+            }
+            binding.payStopNumber.setText(stopTitle);
+            binding.payLongTime.setText("停车时长："+LongTimeOrString.longTimeOrString(parkingTime));
+            binding.payComeTime.setText("停驻时间："+LongTimeOrString.stringStopTime(parkingTime,thisTime));
+            binding.payOutTime.setText("当前时间："+LongTimeOrString.longTimeOrString(thisTime));
+
+
+
+
+            if (data != null){
+                //修改PayActivity状态
+                String payStatus = data.getPayStatus();
+                if ("no_pay".equals(payStatus)){
+                    if (data.getDueFare()>0.0){
+                        upDataPayState(Config.PAYCHARGE);
+                    }
+
+                }
+                if ("escape".equals(payStatus)||"arrearage".equals(payStatus)||"payed".equals(payStatus)){
+                    upDataPayState(Config.PAYPRINT);
                 }
 
             }
-            if ("escape".equals(payStatus)||"arrearage".equals(payStatus)||"payed".equals(payStatus)){
-                upDataPayState(Config.PAYPRINT);
-            }
 
 
 
-            //UI界面写入车牌
-            setUIStopId();
+
 
             //修改按钮数据
             //判断状态：拍照后 保存照片后（查询订单） 收费 收费后
             //       takePhoto  savePhoto     payCharge  payPrint
             //查询当前页面状态
             queryState();
+
+            //UI界面写入车牌
+            if (currentState.equals(Config.SAVEPHOTO)){
+                setUIStopId();
+            }
+
             //修改按钮
             if (currentState.equals(Config.TAKEPHOTO)){
                 binding.payBntOne.setText(getSourString(R.string.pay_save));
                 binding.payBntTwo.setText(getSourString(R.string.pay_photo));
                 binding.payBntThree.setText(getSourString(R.string.pay_print));
+                binding.payBntOne.setVisibility(View.VISIBLE);
                 binding.payBntTwo.setVisibility(View.VISIBLE);
                 binding.payBntThree.setVisibility(View.VISIBLE);
                 binding.payBntFour.setVisibility(View.INVISIBLE);
@@ -225,6 +260,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             }
             if (currentState.equals(Config.SAVEPHOTO)){
                 binding.payBntOne.setText(getSourString(R.string.pay_taskPhone_print));
+                binding.payBntOne.setVisibility(View.VISIBLE);
                 binding.payBntTwo.setVisibility(View.INVISIBLE);
                 binding.payBntThree.setVisibility(View.INVISIBLE);
                 binding.payBntFour.setVisibility(View.INVISIBLE);
@@ -234,6 +270,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                 binding.payBntOne.setText(getSourString(R.string.pay_cash));
                 binding.payBntTwo.setText(getSourString(R.string.pay_task));
                 binding.payBntThree.setText(getSourString(R.string.pay_escape));
+                binding.payBntOne.setVisibility(View.VISIBLE);
                 binding.payBntTwo.setVisibility(View.VISIBLE);
                 binding.payBntThree.setVisibility(View.VISIBLE);
                 binding.payBntFour.setVisibility(View.VISIBLE);
@@ -241,6 +278,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             }
             if (currentState.equals(Config.PAYPRINT)){
                 binding.payBntOne.setText(getSourString(R.string.pay_print_money));
+                binding.payBntOne.setVisibility(View.VISIBLE);
                 binding.payBntTwo.setVisibility(View.INVISIBLE);
                 binding.payBntThree.setVisibility(View.INVISIBLE);
                 binding.payBntFour.setVisibility(View.INVISIBLE);
@@ -248,7 +286,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             }
 
 
-        }
+
     }
 
 
@@ -270,11 +308,12 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.pay_bnt_one:
                 if (state.equals(getSourString(R.string.pay_save))){//保存
+                    upDataPayState(Config.SAVEPHOTO);
+
+                    //刷新界面
+                    downParkingOrderInfoCarNumber();
                     //直接打印
                     Print(1);
-                    upDataPayState(Config.SAVEPHOTO);
-                    //刷新界面
-                    initView();
                     break;
                 }
                 if (state.equals(getSourString(R.string.pay_taskPhone_print))){//补打
@@ -310,16 +349,13 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             case R.id.pay_bnt_three:
                 if (state.equals(getSourString(R.string.pay_print))){
                     //直接打印
-                    Print(1);
+                    if (!currentState.equals(Config.TAKEPHOTO)){
+                        Print(1);
+                    }
+                    Toast.makeText(activity,"没有保存订单!",Toast.LENGTH_SHORT).show();
                     break;
                 }
                 if (state.equals(getSourString(R.string.pay_escape))){//逃费
-
-
-
-
-
-
                     parkingOrderInteractor.parkingOrderInfo("Escape.do", id_stringOrJson(), new BaseSubscriber<String>() {
                         @Override
                         protected void onSuccess(String result) {
@@ -388,10 +424,10 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             }
         }
 
-        //默认 wocket已经默认
-//        if ("".equals(currentState)){
-//            currentState = "takePhoto";
-//        }
+
+        if ("".equals(currentState)){
+            currentState = "takePhoto";
+        }
     }
 
 
@@ -414,12 +450,14 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         ArrayList<UIsBean.UIBean> lists = uIsBean.getLists();
         if (lists!=null&&lists.size()!=0){
             int parkSeatId = data.getParkSeatId();
+            String vehicleNo = data.getVehicleNo();
             for (int i=0;i<lists.size();i++){
                 UIsBean.UIBean uiBean = lists.get(i);
                 int stopId = uiBean.getParkSeatId();
                 if (parkSeatId == stopId){
+                    uiBean.setVehicleNo(vehicleNo);
                     uiBean.setPhoto(true);
-                    uiBean.setVehicleNo(data.getVehicleNo());
+                    Log.i("Bean","data.getVehicleNo():"+ vehicleNo);
                     uiBean.setIsParking("yes_photo");
                 }
 
@@ -523,24 +561,26 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             Toast.makeText(activity, "不支付打印机功能", Toast.LENGTH_SHORT).show();
             return;
         }
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("state",state);
             jsonObject.put("license_plate",binding.payLicensePlate.getText());
-            jsonObject.put("stop_number",binding.payStopNumber.getText());
+            jsonObject.put("stop_number",stopTitle);
             jsonObject.put("long_time",binding.payLongTime.getText());
             jsonObject.put("come_time",binding.payComeTime.getText());
             jsonObject.put("out_time",binding.payOutTime.getText());
             jsonObject.put("money",binding.payMoney.getText());
             jsonObject.put("userName",userName);
 
-            if (data.getMobileUrl()==null){
+            if (data==null){
                 jsonObject.put("qrcode","www.baidu.com");
             }else {
-                jsonObject.put("qrcode",data.getMobileUrl());
+                if (data.getMobileUrl()==null){
+                    jsonObject.put("qrcode","www.baidu.com");
+                }else {
+                    jsonObject.put("qrcode",data.getMobileUrl());
+                }
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -562,4 +602,37 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         Toast.makeText(this, "[打印机]"+ msg, Toast.LENGTH_SHORT).show();
     }
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_1){
+            if (binding.payBntOne.getVisibility()!=View.INVISIBLE){
+                binding.payBntOne.callOnClick();
+                return true;
+            }
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_2){
+            if (binding.payBntTwo.getVisibility()!= View.INVISIBLE){
+                binding.payBntTwo.callOnClick();
+                return true;
+            }
+        }
+        if (keyCode == KeyEvent.KEYCODE_3){
+            if (binding.payBntThree.getVisibility()!= View.INVISIBLE){
+                binding.payBntThree.callOnClick();
+                return true;
+            }
+        }
+        if (keyCode == KeyEvent.KEYCODE_4){
+            if (binding.payBntFour.getVisibility()!= View.INVISIBLE){
+                binding.payBntFour.callOnClick();
+                return true;
+            }
+        }
+
+
+        return super.onKeyDown(keyCode, event);
+    }
 }

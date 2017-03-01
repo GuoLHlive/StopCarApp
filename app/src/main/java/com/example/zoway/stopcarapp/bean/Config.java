@@ -27,6 +27,10 @@ public class Config {
     public static final String PAYCHARGE = "payCharge";
     public static final String PAYPRINT = "payPrint";
 
+    //停车路段名字
+    public static final String STOPTITLE = "stopTitle";
+
+
 
 
 
